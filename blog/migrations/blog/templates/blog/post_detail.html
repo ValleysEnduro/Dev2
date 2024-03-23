@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ post.title }}</h1>
+  <h2>{{ post.subtitle }}</h2>
+  <p>{{ post.body }}</p>
+
+  Image URL: {{ post.image.url }}
+
+  {% if post.image %}
+  <img src="{{ post.image.url }}" alt="Post image">
+  {% endif %}
+
+  <!-- Include more post details and SEO metadata as needed -->
+{% endblock %}
