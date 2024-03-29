@@ -13,6 +13,8 @@ To deploy this project will require some famailiarality with MS VS Code and Djan
 ### Requirement
 I designed this app for event organisers. With rising costs of everything it is increasingly difficult to contribute to communities, keep entries from sky rocketing and run a race without going bankrupt. So, I decided to develop a web app which will allow anyone from race organisers, charities and clubs to run a cost effective system and succesful races.
 
+In addition, I'm neurodivergent and having multiple versions of the truth is incredibly draining. typically you have to update operationally different systems with the same information. This includes your entry system with details, timing system, results system, website, social media etc...... Removing some of this cognitive burden and condensing into one app will be a relief!
+
 ### Vision
 A lightningly fast and lightweight in appearance web app with awesome SEO and analytics using bootstrap 5.
 
@@ -22,7 +24,7 @@ Django framework which is a comprehensive tech stack out of the box.
 ### Testing
 To follow
 
-### Road map
+### Road map (no particular order)
 + Event builder
 + ~Blog writer~
 + ~Open StreetMap integration into event page~
@@ -57,6 +59,8 @@ To follow
 + Deployment
 + Unit tests
 + Factory boy
++ in app messaging to organiser from anyone
++ in app FAQ builder
 
 ## Deployment
 

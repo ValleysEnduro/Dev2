@@ -4,9 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script type="application/ld+json">
+        {% block structured_data %}
+        {
+          "@context": "http://schema.org",
+          "@type": "www.western-bike-events.wales",
+          "name": "Your Site Name",
+          "url": "https://www.western-bike-events.wales",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "http://www.yoursite.com/search/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+        {% endblock structured_data %}
+        </script>
+
     <title>{% block title %}My Blog{% endblock %}</title>
+
 </head>
+
 <body>
+
     <header>
         <!-- Header content here -->
     </header>
