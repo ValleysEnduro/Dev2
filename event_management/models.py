@@ -25,6 +25,8 @@ class Event(MP_Node):
     name = models.CharField(max_length=100)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='events')
     date = models.DateField()
+    description = models.TextField(blank=True)
+    last_modified = models.DateTimeField(auto_now=True)
 
     node_order_by = ['date']
 
