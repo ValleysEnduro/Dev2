@@ -3,6 +3,7 @@ from treebeard.mp_tree import MP_Node
 from age_categories.models import AgeCategory  # Import the AgeCategory model
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
+from django.utils import timezone
 
 class Venue(MP_Node):
     name = models.CharField(max_length=100)
@@ -44,3 +45,20 @@ class Race(MP_Node):
     def __str__(self):
         return self.name
 
+class Entry(models.Model):
+    race = models.ForeignKey(Race, on_delete=models.CASCADE, related_name='entries')
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    age_category = models.ForeignKey(AgeCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    club_team_name = models.CharField(max_length=100, blank=True)
+    entry_close_datetime = models.DateTimeField()
+    transfer_close_datetime = models.DateTimeField()
+    is_archived = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} - {self.race.name}"
+
+    @property
+    def can_edit_or_transfer(self):
+        """Check if the entry is within the editable or transferable period."""
+        return timezone.now() < self.transfer_close_datetime
