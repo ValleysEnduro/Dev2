@@ -1,6 +1,8 @@
 <!-- core/templates/homepage.html -->
 {% extends "base.html" %}
 
+{% block title %}{{ homepage_content.page_title }}{% endblock %}
+
 {% block content %}
 <div class="hero-section" style="background-image: url('{{ homepage_content.hero_image.url }}');">
   <h1>{{ homepage_content.hero_title }}</h1>
