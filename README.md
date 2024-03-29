@@ -29,6 +29,8 @@ To follow
 ### Road map (no particular order)
 + Event builder
     +add extra fields 
++ ~treebeard~
++ ~nested admin~
 + ~Blog writer~
 + ~Open StreetMap integration into event page~
 + SEO
