@@ -43,6 +43,7 @@ To follow
         + Home page
 + Race entry form builder
     + Set up views
+    + ~Setup CRUD user entries~
     + Integrate with templates and URLS
 + Results and scoring service
 + Live results plugin

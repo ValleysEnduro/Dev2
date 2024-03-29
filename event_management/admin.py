@@ -1,7 +1,7 @@
 
 from django.contrib import admin
 import nested_admin
-from .models import Venue, Event, Race
+from .models import Venue, Event, Race, Entry
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
@@ -21,6 +21,12 @@ class VenueAdmin(nested_admin.NestedModelAdmin, TreeAdmin):
     inlines = [EventInline]
     list_display = ('name', 'location', 'display_depth', 'display_numchild')
 
+class EntryInline(nested_admin.NestedTabularInline):
+    model = Entry
+    extra = 0  # Adjust as needed, 0 means no extra empty forms
+    # Specify any fields you want to be read-only, if the race has already occurred, etc.
+    readonly_fields = ['is_archived']  # Example, adjust based on your logic
+
     def display_depth(self, obj):
         return obj.depth
     display_depth.short_description = 'Hierarchy Level'
@@ -33,6 +39,7 @@ class RaceInline(nested_admin.NestedTabularInline):
     model = Race
     form = movenodeform_factory(Race)  # Added to incorporate treebeard form functionality
     extra = 1
+    inlines = [EntryInline]  # Add EntryInline here
     readonly_fields = ('display_path', 'display_depth', 'display_numchild')  # New
 
     def display_path(self, obj):
