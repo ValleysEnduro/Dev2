@@ -4,7 +4,7 @@
   <h1>Blog Posts</h1>
   {% for post in posts %}
     <div>
-      <h2><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h2>
+      <a href="{% url 'blog:post_detail' slug=post.slug %}">{{ post.title }}</a>
       <h3>{{ post.subtitle }}</h3>
       <!-- Display other post details here -->
     </div>

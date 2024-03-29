@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import RedirectView
 from core.views import homepage_view
+from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
