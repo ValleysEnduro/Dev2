@@ -1,7 +1,8 @@
 from django.urls import path
-from . import views
+from .views import post_list, post_detail
 
 urlpatterns = [
-    path('', views.post_list, name='post_list'),  # Corrected to 'post_list'
-    path('<int:post_id>/', views.post_detail, name='post_detail'),
+    path('', post_list, name='post_list'),
+    # Updating the path to use slugs
+    path('post/<slug:slug>/', post_detail, name='post_detail'),
 ]

@@ -12,5 +12,15 @@
     </a>
   {% endif %}
 </div>
+
+<h2>Latest Blog Posts</h2>
+<ul>
+    {% for post in posts %}
+    <li>
+        <<a href="{% url 'post_detail' slug=post.slug %}">{{ post.title }}</a>
+      <!-- Use 'post.slug' or 'post.id', depending on how your 'blog_detail' view is set up -->
+    </li>
+  {% endfor %}
+</ul>
 {% endblock %}
 
