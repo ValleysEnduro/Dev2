@@ -24,28 +24,28 @@ To follow
 
 # Road map
 + Event builder
-+~Blog writer~
-+~Open StreetMap integration into event page~
-+Race entry form builder
-+Results and scoring service
-+Live results plugin
-+Stripe integration
-+Paypal integration
-+CRM
-+Promotions
-+Web shop
-+Gift cards
-+~Age category builder~
-+~Image convertor~
-+~Image compression~
-+Django Auth
-+Google Auth
-+Homepage builder
-+Web page builder
-+Snippet builder
-+Component builder
-+Google Tag Manager 
-+Facebook offline conversions
++ ~Blog writer~
++ ~Open StreetMap integration into event page~
++ Race entry form builder
++ Results and scoring service
++ Live results plugin
++ Stripe integration
++ Paypal integration
++ CRM
++ Promotions
++ Web shop
++ Gift cards
++ ~Age category builder~
++ ~Image convertor~
++ ~Image compression~
++ Django Auth
++ Google Auth
++ Homepage builder
++ Web page builder
++ Snippet builder
++ Component builder
++ Google Tag Manager 
++ Facebook offline conversions
 
 # Deployment
 
