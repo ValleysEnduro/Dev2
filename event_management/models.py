@@ -1,5 +1,6 @@
 from django.db import models
 from treebeard.mp_tree import MP_Node
+from age_categories.models import AgeCategory  # Import the AgeCategory model
 
 class Venue(MP_Node):
     name = models.CharField(max_length=100)
@@ -24,6 +25,7 @@ class Race(MP_Node):
     name = models.CharField(max_length=100)
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='races')
     start_time = models.TimeField()
+    age_categories = models.ManyToManyField(AgeCategory, related_name='races', blank=True)  # Add this line
 
     node_order_by = ['start_time']
 

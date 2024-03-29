@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'treebeard',
     'rest_framework',
     'nested_admin',
-    'event_management'
+    'event_management',
+    'age_categories',
     
 ]
 
