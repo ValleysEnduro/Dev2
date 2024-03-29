@@ -14,7 +14,7 @@ To deploy this project will require some famailiarality with MS VS Code and Djan
 I designed this app for event organisers. With rising costs of everything it is increasingly difficult to contribute to communities, keep entries from sky rocketing and run a race without going bankrupt. So, I decided to develop a web app which will allow anyone from race organisers, charities and clubs to run a cost effective system and succesful races.
 
 # Vision
-A lightningly fast and lightweight web app with awesome SEO and analytics using bootstrap 5.
+A lightningly fast and lightweight in appearance web app with awesome SEO and analytics using bootstrap 5.
 
 # Stack
 Django framework which is a comprehensive tech stack out of the box. 
@@ -23,29 +23,29 @@ Django framework which is a comprehensive tech stack out of the box.
 To follow
 
 # Road map
-Event builder
-~Blog writer~
-~Open StreetMap integration into event page~
-Race entry form builder
-Results and scoring service
-Live results plugin
-Stripe integration
-Paypal integration
-CRM
-Promotions
-Web shop
-Gift cards
-~Age category builder~
-~Image convertor~
-~Image compression~
-Django Auth
-Google Auth
-Homepage builder
-Web page builder
-Snippet builder
-Component builder
-Google Tag Manager 
-Facebook offline conversions
++ Event builder
++~Blog writer~
++~Open StreetMap integration into event page~
++Race entry form builder
++Results and scoring service
++Live results plugin
++Stripe integration
++Paypal integration
++CRM
++Promotions
++Web shop
++Gift cards
++~Age category builder~
++~Image convertor~
++~Image compression~
++Django Auth
++Google Auth
++Homepage builder
++Web page builder
++Snippet builder
++Component builder
++Google Tag Manager 
++Facebook offline conversions
 
 # Deployment
 
