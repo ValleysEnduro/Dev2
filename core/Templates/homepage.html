@@ -1,0 +1,14 @@
+<!-- core/templates/homepage.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section" style="background-image: url('{{ homepage_content.hero_image.url }}');">
+  <h1>{{ homepage_content.hero_title }}</h1>
+  {% if homepage_content.hero_button_text and homepage_content.hero_button_link %}
+    <a href="{{ homepage_content.hero_button_link }}" class="hero-button">
+      {{ homepage_content.hero_button_text }}
+    </a>
+  {% endif %}
+</div>
+{% endblock %}
+

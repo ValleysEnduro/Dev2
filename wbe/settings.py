@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'nested_admin',
     'event_management',
     'age_categories',
+    'core',
     
 ]
 
