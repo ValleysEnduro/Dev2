@@ -27,8 +27,15 @@ Django framework which is a comprehensive tech stack out of the box.
 To follow
 
 ### Road map (no particular order)
-+ Event builder
-    +add extra fields 
++ Event management app
+    + add extra fields
+    + Dashboard
+        + entries by race
+        + particpant demographics
+        + participant heat map
+        + race income
+        + event income
+        + overall income
 + ~treebeard~
 + ~nested admin~
 + ~Blog writer~
