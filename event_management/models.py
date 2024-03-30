@@ -52,6 +52,7 @@ class Entry(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='entries')
     race = models.ForeignKey(Race, on_delete=models.CASCADE, related_name='entries')
     privacy_policy_accepted = models.BooleanField(default=False, verbose_name='I agree to the Privacy Policy')
+    refund_policy_accepted = models.BooleanField(default=False, verbose_name='I agree to the Refund Policy')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     age_category = models.ForeignKey(AgeCategory, on_delete=models.SET_NULL, null=True, blank=True)

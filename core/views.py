@@ -33,5 +33,11 @@ def privacy_policy_view(request):
     policy = PrivacyPolicy.objects.latest('last_updated')
     return render(request, 'core/privacy_policy.html', {'policy': policy})
 
+from event_management.models import RefundPolicy
+
+def refund_policy_view(request):
+    policy = RefundPolicy.objects.last()  # Assuming you want the latest policy
+    return render(request, 'core/refund_policy.html', {'policy': policy})
+
 
 
