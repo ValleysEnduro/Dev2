@@ -1,6 +1,7 @@
 from django.db import models
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
+from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 
 class HomePage(models.Model):
     page_title = models.CharField(max_length=255, blank=True, verbose_name="Page Title")
@@ -27,11 +28,13 @@ class HomePage(models.Model):
 
 class RefundPolicy(models.Model):
     name = models.CharField(max_length=100)
+    content = models.TextField()  # Changed from RichTextField to TextField
+    last_updated = models.DateTimeField(auto_now=True)
     cutoff_days = models.IntegerField(help_text="Number of days before the event when refunds are no longer available.")
     refund_percentage = models.DecimalField(max_digits=5, decimal_places=2, help_text="Percentage of the entry fee that will be refunded if cancelled before the cutoff.")
 
     def __str__(self):
-        return self.name
+        return f"Refund Policy updated on {self.last_updated.strftime('%Y-%m-%d')}"
     
 class PrivacyPolicy(models.Model):
     content = models.TextField()

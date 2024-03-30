@@ -9,11 +9,15 @@ def homepage_view(request):
     homepage_content = HomePage.objects.first()  # Assuming there's only one homepage content entry
     return render(request, 'core/homepage.html', {'homepage_content': homepage_content})
 
+from django_summernote.admin import SummernoteModelAdmin
 from .models import RefundPolicy
 
-@admin.register(RefundPolicy)
-class RefundPolicyAdmin(admin.ModelAdmin):
-    list_display = ['name', 'cutoff_days', 'refund_percentage']
+# Customize the admin form to use Summernote for the 'content' field
+class RefundPolicyAdmin(SummernoteModelAdmin):
+    summernote_fields = ('content',)  # Apply Summernote to the 'content' field
+    list_display = ['name', 'cutoff_days', 'refund_percentage', 'last_updated']
+
+admin.site.register(RefundPolicy, RefundPolicyAdmin)
 
 from .models import PrivacyPolicy
 
