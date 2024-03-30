@@ -1,11 +1,12 @@
 from django.db import models
 from treebeard.mp_tree import MP_Node
-from age_categories.models import AgeCategory  # Import the AgeCategory model
+from age_categories.models import AgeCategory
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 from django.utils import timezone
 from django.conf import settings
-from core.models import RefundPolicy  # Import the RefundPolicy model
+from core.models import RefundPolicy
+# No import from mptt.models needed
 
 class Venue(MP_Node):
     name = models.CharField(max_length=100)
@@ -18,32 +19,32 @@ class Venue(MP_Node):
                                      options={'quality': 90},
                                      blank=True,
                                      null=True)
+    # Removed MPTT specific fields like parent TreeForeignKey
+    # Treebeard uses 'path', 'depth', 'numchild' automatically managed fields for hierarchy
 
     node_order_by = ['name']
 
     def __str__(self):
         return self.name
 
-class Event(MP_Node):
+# Assuming Event does not have a hierarchical relationship and is simply linked to Venue
+class Event(models.Model):
     name = models.CharField(max_length=100)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='events')
     date = models.DateField()
     description = models.TextField(blank=True)
     last_modified = models.DateTimeField(auto_now=True)
-
-    node_order_by = ['date']
+    # Removed parent TreeForeignKey as it seems Event is not hierarchical within itself
 
     def __str__(self):
         return self.name
 
-class Race(MP_Node):
+class Race(models.Model):
     name = models.CharField(max_length=100)
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='races')
     start_time = models.TimeField()
-    age_categories = models.ManyToManyField(AgeCategory, related_name='races', blank=True)  # Add this line
+    age_categories = models.ManyToManyField(AgeCategory, related_name='races', blank=True)
     refund_policy = models.ForeignKey(RefundPolicy, on_delete=models.SET_NULL, null=True, blank=True, related_name='races')
-
-    node_order_by = ['start_time']
 
     def __str__(self):
         return self.name
@@ -62,9 +63,7 @@ class Entry(models.Model):
     is_archived = models.BooleanField(default=False)
 
     def can_cancel(self):
-        if self.race.refund_policy and timezone.now() <= self.race.event.date - timezone.timedelta(days=self.race.refund_policy.cutoff_days):
-            return True
-        return False
+        return self.race.refund_policy and timezone.now() <= self.race.event.date - timezone.timedelta(days=self.race.refund_policy.cutoff_days)
 
     def refund_amount(self):
         if self.can_cancel():

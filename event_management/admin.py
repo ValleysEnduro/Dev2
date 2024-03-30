@@ -2,20 +2,25 @@ from django.contrib import admin
 from django_summernote.admin import SummernoteModelAdmin
 from .models import Venue, Event, Race, Entry
 from treebeard.admin import TreeAdmin
-from treebeard.forms import movenodeform_factory
+from treebeard.forms import MoveNodeForm
 
-# Register Venue, Event, and Race with Treebeard's TreeAdmin
+# Adjusted VenueAdmin for Treebeard
 class VenueAdmin(TreeAdmin):
-    form = movenodeform_factory(Venue)
+    form = MoveNodeForm
+    # Define any additional fields or configurations here
 
-class EventAdmin(TreeAdmin, SummernoteModelAdmin):  # Use both TreeAdmin and SummernoteModelAdmin
-    form = movenodeform_factory(Event)
-    summernote_fields = ('description',)  # Specify the Summernote field(s)
+# Adjusted EventAdmin to integrate Summernote without MPTTModelAdmin
+class EventAdmin(SummernoteModelAdmin, admin.ModelAdmin):
+    summernote_fields = ('description',)
+    # Since Event is not using Treebeard for hierarchical features based on the model structure shared,
+    # it's managed as a regular model but with Summernote integration for the description field.
 
-class RaceAdmin(TreeAdmin):
-    form = movenodeform_factory(Race)
+# Standard admin registration for Race
+class RaceAdmin(admin.ModelAdmin):
+    list_display = ['name', 'event', 'start_time']
+    search_fields = ['name', 'event__name']
 
-# Standard admin registration for Entry, as it's not using Treebeard
+# Standard admin registration for Entry
 class EntryAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'race', 'user']
     search_fields = ['first_name', 'last_name', 'race__name', 'user__username']

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'age_categories',
     'core',
     'django_summernote',
+    'mptt',
     
 ]
 
