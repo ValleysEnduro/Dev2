@@ -4,6 +4,7 @@ from age_categories.models import AgeCategory  # Import the AgeCategory model
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 from django.utils import timezone
+from django.conf import settings
 
 class Venue(MP_Node):
     name = models.CharField(max_length=100)
@@ -46,6 +47,7 @@ class Race(MP_Node):
         return self.name
 
 class Entry(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='entries')
     race = models.ForeignKey(Race, on_delete=models.CASCADE, related_name='entries')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
