@@ -28,7 +28,7 @@ class HomePage(models.Model):
 
 class RefundPolicy(models.Model):
     name = models.CharField(max_length=100)
-    content = models.TextField()  # Changed from RichTextField to TextField
+    content = models.TextField(null=True)
     last_updated = models.DateTimeField(auto_now=True)
     cutoff_days = models.IntegerField(help_text="Number of days before the event when refunds are no longer available.")
     refund_percentage = models.DecimalField(max_digits=5, decimal_places=2, help_text="Percentage of the entry fee that will be refunded if cancelled before the cutoff.")
