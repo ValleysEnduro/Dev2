@@ -13,7 +13,7 @@ To deploy this project will require some famailiarality with VS Code and Django.
 ### Vision
 A lightningly fast, responsive and lightweight in appearance web app with awesome SEO and analytics using bootstrap 5.
 
-### Features built in
+### Features When Completed
 + CMS for blog content
     + Rich text editor
     + Image compression and WebP conversion
@@ -24,13 +24,18 @@ A lightningly fast, responsive and lightweight in appearance web app with awesom
     + Powerful page builder with analytics
     + Up to date SEO and social sharing practices
 + Stripe and Paypal integration
++ Eccomerrce
+    + Shop for merchandise
+    + Product and category page builder
+    + Up to date SEO
 + Analytics
     + Track where people are coming from
     + GTM
-    + Effective ness of your funnel
+    + Effectiveness of your funnel
     + Dashboard
     + Heat map
-
+    + Meta conversion tracking
+    + Demographic reporting
 
 ### Background
 I designed this app for event organisers. With rising costs of everything it is increasingly difficult to contribute to communities, keep entries from sky rocketing and run a race without going bankrupt. So, I decided to develop a web app which will allow anyone from race organisers, charities and clubs to run a cost effective system and succesful races.
