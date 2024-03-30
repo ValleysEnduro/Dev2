@@ -20,5 +20,7 @@ class RefundPolicyAdmin(SummernoteModelAdmin):
 admin.site.register(RefundPolicy, RefundPolicyAdmin)
 
 from .models import PrivacyPolicy
+class PrivacyPolicyAdmin(SummernoteModelAdmin):
+    summernote_fields = ('content',)
 
 admin.site.register(PrivacyPolicy)

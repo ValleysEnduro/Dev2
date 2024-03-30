@@ -6,7 +6,7 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     subtitle = models.CharField(max_length=200, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    body = models.TextField()
+    content = models.TextField(null=True)
     seo_title = models.CharField(max_length=200, blank=True)
     seo_meta_description = models.CharField(max_length=200, blank=True)
     image = models.ImageField(upload_to='posts_media/', blank=True, null=True)

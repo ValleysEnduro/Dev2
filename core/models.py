@@ -37,7 +37,7 @@ class RefundPolicy(models.Model):
         return f"Refund Policy updated on {self.last_updated.strftime('%Y-%m-%d')}"
     
 class PrivacyPolicy(models.Model):
-    content = models.TextField()
+    content = models.TextField(null=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
