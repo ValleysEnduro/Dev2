@@ -28,6 +28,12 @@ A lightningly fast, responsive and lightweight in appearance web app with awesom
     + Shop for merchandise
     + Product and category page builder
     + Up to date SEO
++ CRM
+    + Marketing emails
+    + Transactional emails
+    + Affiliates
+    + Vouchers codes
+    + Discount codes
 + Analytics
     + Track where people are coming from
     + GTM
