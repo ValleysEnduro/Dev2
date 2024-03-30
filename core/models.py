@@ -24,3 +24,18 @@ class HomePage(models.Model):
 
     def __str__(self):
         return self.page_title or "Homepage"
+
+class RefundPolicy(models.Model):
+    name = models.CharField(max_length=100)
+    cutoff_days = models.IntegerField(help_text="Number of days before the event when refunds are no longer available.")
+    refund_percentage = models.DecimalField(max_digits=5, decimal_places=2, help_text="Percentage of the entry fee that will be refunded if cancelled before the cutoff.")
+
+    def __str__(self):
+        return self.name
+    
+class PrivacyPolicy(models.Model):
+    content = models.TextField()
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Privacy Policy updated on {self.last_updated.strftime('%Y-%m-%d')}"

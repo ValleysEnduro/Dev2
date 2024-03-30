@@ -5,6 +5,7 @@ from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 from django.utils import timezone
 from django.conf import settings
+from core.models import RefundPolicy  # Import the RefundPolicy model
 
 class Venue(MP_Node):
     name = models.CharField(max_length=100)
@@ -40,6 +41,7 @@ class Race(MP_Node):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='races')
     start_time = models.TimeField()
     age_categories = models.ManyToManyField(AgeCategory, related_name='races', blank=True)  # Add this line
+    refund_policy = models.ForeignKey(RefundPolicy, on_delete=models.SET_NULL, null=True, blank=True, related_name='races')
 
     node_order_by = ['start_time']
 
@@ -47,8 +49,9 @@ class Race(MP_Node):
         return self.name
 
 class Entry(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='entries')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='entries')
     race = models.ForeignKey(Race, on_delete=models.CASCADE, related_name='entries')
+    privacy_policy_accepted = models.BooleanField(default=False, verbose_name='I agree to the Privacy Policy')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     age_category = models.ForeignKey(AgeCategory, on_delete=models.SET_NULL, null=True, blank=True)
@@ -57,10 +60,12 @@ class Entry(models.Model):
     transfer_close_datetime = models.DateTimeField()
     is_archived = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} - {self.race.name}"
+    def can_cancel(self):
+        if self.race.refund_policy and timezone.now() <= self.race.event.date - timezone.timedelta(days=self.race.refund_policy.cutoff_days):
+            return True
+        return False
 
-    @property
-    def can_edit_or_transfer(self):
-        """Check if the entry is within the editable or transferable period."""
-        return timezone.now() < self.transfer_close_datetime
+    def refund_amount(self):
+        if self.can_cancel():
+            return self.entry_fee * (self.race.refund_policy.refund_percentage / 100)
+        return 0

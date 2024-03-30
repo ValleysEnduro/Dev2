@@ -16,3 +16,6 @@ def create_entry(request, race_id):
     else:
         form = EntryForm(initial={'race': race})
     return render(request, 'event_management/create_entry.html', {'form': form, 'race': race})# Create your views here.
+
+
+

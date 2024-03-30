@@ -11,5 +11,27 @@ def homepage_view(request):
     }
     return render(request, 'homepage.html', context)
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from event_management.models import Entry
+
+@login_required
+def cancel_entry(request, entry_id):
+    entry = get_object_or_404(Entry, id=entry_id, user=request.user)
+    if entry.can_cancel():
+        refund = entry.refund_amount()
+        entry.delete()
+        messages.success(request, f"Your entry has been successfully canceled. Refund: {refund}")
+    else:
+        messages.error(request, "Cancellation period has passed.")
+    return redirect('your-redirect-url')
+
+from .models import PrivacyPolicy
+
+def privacy_policy_view(request):
+    policy = PrivacyPolicy.objects.latest('last_updated')
+    return render(request, 'core/privacy_policy.html', {'policy': policy})
+
 
 
