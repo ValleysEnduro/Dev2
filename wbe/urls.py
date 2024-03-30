@@ -20,7 +20,7 @@ urlpatterns = [
     path('', homepage_view, name='homepage'),  # This serves as the homepage
     path('admin/', admin.site.urls),
     path('blog/', include(('blog.urls', 'blog'), namespace='blog')),
-    path('summernote/', include('django_summernote.urls'))
+    path('summernote/', include('django_summernote.urls')),
     # Placeholder for when you're ready to add events
     # path('events/', include('events.urls')),
 ]
