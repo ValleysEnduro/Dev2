@@ -23,4 +23,4 @@ from .models import PrivacyPolicy
 class PrivacyPolicyAdmin(SummernoteModelAdmin):
     summernote_fields = ('content',)
 
-admin.site.register(PrivacyPolicy)
+admin.site.register(PrivacyPolicy, PrivacyPolicyAdmin)
