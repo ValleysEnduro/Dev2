@@ -16,15 +16,25 @@ class VenueAdmin(admin.ModelAdmin):
 
 admin.site.register(Venue, VenueAdmin)
 
-class EventAdmin(SummernoteModelAdmin, admin.ModelAdmin):
-    summernote_fields = ('description',)
-    list_display = ('name', 'date', 'venue', 'view_races_link',)  # Updated to include custom link method
+class EventAdmin(admin.ModelAdmin):
+    list_display = ('name', 'get_depth', 'get_numchild', 'get_numraces', 'get_numentries')
+    exclude = ('path', 'depth', 'numchild')
 
-    def view_races_link(self, obj):
-        url = reverse('admin:event_management_race_changelist') + f'?event__id__exact={obj.pk}'
-        return format_html('<a href="{}">View Races</a>', url)
+    def get_depth(self, obj):
+        return f"Level {obj.depth} in the tree"
+    get_depth.short_description = "Depth"
 
-    view_races_link.short_description = "Races"
+    def get_numchild(self, obj):
+        return f"{obj.numchild} immediate children"
+    get_numchild.short_description = "Number of Children"
+
+    def get_numraces(self, obj):
+        return obj.races.count()
+    get_numraces.short_description = "Number of Races"
+
+    def get_numentries(self, obj):
+        return Entry.objects.filter(race__event=obj).count()
+    get_numentries.short_description = "Number of Entries"
 
 admin.site.register(Event, EventAdmin)
 
