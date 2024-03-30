@@ -58,6 +58,10 @@ To follow
 
 ### Road map (no particular order)
 + Event management app
+    + Treebeard Materialised Path
+        + Venue
+            + event
+                + race
     + add extra fields
     + refund policy
     + terms and conditions

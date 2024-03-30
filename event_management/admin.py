@@ -1,31 +1,47 @@
+from django.urls import reverse
+from django.utils.html import format_html
 from django.contrib import admin
-from django_summernote.admin import SummernoteModelAdmin
-from .models import Venue, Event, Race, Entry
+from .models import Venue, Event, Race, Entry  # Removed trailing comma
 from treebeard.admin import TreeAdmin
-from treebeard.forms import MoveNodeForm
+from django_summernote.admin import SummernoteModelAdmin  # Added missing import
 
-# Adjusted VenueAdmin for Treebeard
-class VenueAdmin(TreeAdmin):
-    form = MoveNodeForm
-    # Define any additional fields or configurations here
+class VenueAdmin(admin.ModelAdmin):
+    list_display = ('name', 'view_events_link',)
 
-# Adjusted EventAdmin to integrate Summernote without MPTTModelAdmin
-class EventAdmin(SummernoteModelAdmin, admin.ModelAdmin):
-    summernote_fields = ('description',)
-    # Since Event is not using Treebeard for hierarchical features based on the model structure shared,
-    # it's managed as a regular model but with Summernote integration for the description field.
+    def view_events_link(self, obj):
+        url = reverse('admin:event_management_event_changelist') + f'?venue__id__exact={obj.pk}'
+        return format_html('<a href="{}">View Events</a>', url)
 
-# Standard admin registration for Race
-class RaceAdmin(admin.ModelAdmin):
-    list_display = ['name', 'event', 'start_time']
-    search_fields = ['name', 'event__name']
-
-# Standard admin registration for Entry
-class EntryAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'race', 'user']
-    search_fields = ['first_name', 'last_name', 'race__name', 'user__username']
+    view_events_link.short_description = "Events"
 
 admin.site.register(Venue, VenueAdmin)
+
+class EventAdmin(SummernoteModelAdmin, admin.ModelAdmin):
+    summernote_fields = ('description',)
+    list_display = ('name', 'date', 'venue', 'view_races_link',)  # Updated to include custom link method
+
+    def view_races_link(self, obj):
+        url = reverse('admin:event_management_race_changelist') + f'?event__id__exact={obj.pk}'
+        return format_html('<a href="{}">View Races</a>', url)
+
+    view_races_link.short_description = "Races"
+
 admin.site.register(Event, EventAdmin)
+
+class RaceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'event', 'view_entries_link',)  # Corrected from view_participants_link to view_entries_link
+
+    def view_entries_link(self, obj):  # Renamed method
+        url = reverse('admin:event_management_entry_changelist') + f'?race__id__exact={obj.pk}'
+        return format_html('<a href="{}">View Entries</a>', url)
+
+    view_entries_link.short_description = "Entries"
+
 admin.site.register(Race, RaceAdmin)
+
+# Renamed from ParticipantAdmin to EntryAdmin to match your model name
+class EntryAdmin(admin.ModelAdmin):
+    list_display = ('user', 'race', 'first_name', 'last_name', 'age_category', 'club_team_name', 'entry_close_datetime', 'transfer_close_datetime', 'is_archived',)
+    # Updated list_display to match the Entry model fields
+
 admin.site.register(Entry, EntryAdmin)

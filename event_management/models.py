@@ -6,9 +6,8 @@ from imagekit.processors import ResizeToFill
 from django.utils import timezone
 from django.conf import settings
 from core.models import RefundPolicy
-# No import from mptt.models needed
 
-class Venue(MP_Node):
+class Venue(models.Model):
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=255)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
@@ -19,22 +18,17 @@ class Venue(MP_Node):
                                      options={'quality': 90},
                                      blank=True,
                                      null=True)
-    # Removed MPTT specific fields like parent TreeForeignKey
-    # Treebeard uses 'path', 'depth', 'numchild' automatically managed fields for hierarchy
-
-    node_order_by = ['name']
 
     def __str__(self):
         return self.name
 
-# Assuming Event does not have a hierarchical relationship and is simply linked to Venue
-class Event(models.Model):
+class Event(MP_Node):
     name = models.CharField(max_length=100)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='events')
     date = models.DateField()
     description = models.TextField(blank=True)
     last_modified = models.DateTimeField(auto_now=True)
-    # Removed parent TreeForeignKey as it seems Event is not hierarchical within itself
+    node_order_by = ['name']
 
     def __str__(self):
         return self.name
