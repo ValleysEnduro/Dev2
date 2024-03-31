@@ -27,6 +27,7 @@ class Event(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='events')
     date = models.DateField()
     description = models.TextField(blank=True)
+    is_completed = models.BooleanField(default=False)
     last_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -40,6 +41,7 @@ class Race(models.Model):
     refund_policy = models.ForeignKey(RefundPolicy, on_delete=models.SET_NULL, null=True, blank=True, related_name='races')
     entry_close_datetime = models.DateTimeField()
     transfer_close_datetime = models.DateTimeField()
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

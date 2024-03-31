@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_summernote',
     'mptt',
     'events',
+    'celery',
     
 ]
 
