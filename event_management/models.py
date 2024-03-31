@@ -56,6 +56,8 @@ class Entry(models.Model):
     terms_and_conditions_accepted = models.BooleanField(default=False, verbose_name='I agree to the Terms and Conditions')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
+    date_of_birth = models.DateField(null=True)
+    email = models.CharField(max_length=100, null=True)
     age_category = models.ForeignKey(AgeCategory, on_delete=models.SET_NULL, null=True, blank=True)
     club_team_name = models.CharField(max_length=100, blank=True)
     is_archived = models.BooleanField(default=False)

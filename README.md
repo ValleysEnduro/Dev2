@@ -18,7 +18,7 @@ To deploy this project will require some famailiarality with VS Code and Django.
 A lightningly fast, responsive and lightweight in appearance web app with awesome SEO and analytics using bootstrap 5.
 
 ### Features When Completed
-+ CMS for blog content
++ CMS and site builder
     + Rich text editor
     + Image compression and WebP conversion
     + SEO
@@ -27,11 +27,13 @@ A lightningly fast, responsive and lightweight in appearance web app with awesom
     + Manage entries aligned with each race
     + Powerful page builder with analytics
     + Up to date SEO and social sharing practices
+    + Kanban in the admin
 + Stripe and Paypal integration
 + Eccomerrce
     + Shop for merchandise
     + Product and category page builder
     + Up to date SEO
+    inventory management
 + CRM
     + Marketing emails
     + Transactional emails
