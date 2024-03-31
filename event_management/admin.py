@@ -5,6 +5,27 @@ from .models import Venue, Event, Race, Entry
 from django_summernote.admin import SummernoteModelAdmin, SummernoteInlineModelAdmin
 from django import forms
 from django.db import transaction
+import csv
+from django.http import HttpResponse
+
+def export_as_csv(modeladmin, request, queryset):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="entries.csv"'
+    writer = csv.writer(response)
+
+    writer.writerow(['First Name', 'Last Name', 'Email', 'Race', 'Age Category'])
+    for entry in queryset:
+        writer.writerow([
+            entry.first_name,
+            entry.last_name,
+            entry.email,
+            entry.race.name,
+            entry.age_category.name if entry.age_category else ''
+        ])
+
+    return response
+
+export_as_csv.short_description = "Export Selected Entries as CSV"
 
 # Inline admin for Event in VenueAdmin
 class EventInline(SummernoteInlineModelAdmin, admin.StackedInline):  # Use SummernoteInlineModelAdmin for rich text
@@ -77,9 +98,13 @@ class RaceAdmin(admin.ModelAdmin):
 # Admin class for Entry remains as previously defined, no need for changes
 class EntryAdmin(admin.ModelAdmin):
     list_display = ('user', 'race', 'first_name', 'last_name', 'age_category', 'club_team_name', 'is_archived',)
+    actions = [export_as_csv]
 
 # Registration of admin classes
 admin.site.register(Venue, VenueAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Race, RaceAdmin)
 admin.site.register(Entry, EntryAdmin)
+
+
+

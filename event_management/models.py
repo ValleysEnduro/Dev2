@@ -61,6 +61,7 @@ class Entry(models.Model):
     age_category = models.ForeignKey(AgeCategory, on_delete=models.SET_NULL, null=True, blank=True)
     club_team_name = models.CharField(max_length=100, blank=True)
     is_archived = models.BooleanField(default=False)
+    entry_date = models.DateField(auto_now_add=True)
 
     def can_cancel(self):
         return self.race.refund_policy and timezone.now() <= self.race.event.date - timezone.timedelta(days=self.race.refund_policy.cutoff_days)
