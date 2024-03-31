@@ -2,7 +2,11 @@
 Capstone event management application using Django. 
 
 ### Warning
-Ensure you follow all laws and codes of practice in your country when processing personal and sensitive data. Security should be your top priority. I am not responsible if you have a breach. Finally, the Django admin takes getting use to, its brilliant at what it does but don't expect a pretty interface.
+Ensure you follow all laws and codes of practice in your country when processing personal and sensitive data. Security should be your top priority. I am not responsible if you have a breach. 
+
+### Caution
+
+The Django admin takes time to get to grips with.
 
 ### Maintenance Status
 This is an open source project and I'm a complete noob, it is not a maintained product. There is probably better ways of doing things but I will try to keep it up to date. I welcome contributions from the wider community. If you're interested, please get in touch.
