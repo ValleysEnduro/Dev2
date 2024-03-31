@@ -1,24 +1,41 @@
+from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from django.contrib import admin
-from .models import Venue, Event, Race, Entry  # Removed trailing comma
+from .models import Venue, Event, Race, Entry
 from treebeard.admin import TreeAdmin
-from django_summernote.admin import SummernoteModelAdmin  # Added missing import
+from django import forms
 
+
+# Inline admin for Event in VenueAdmin
+class EventInline(admin.StackedInline):
+    model = Event
+    extra = 0  # Adjust the number of empty forms
+
+# Inline admin for Race in EventAdmin
+class RaceInline(admin.TabularInline):
+    model = Race
+    extra = 1  # Adjust according to your needs
+
+# Inline admin for Entry in RaceAdmin
+class EntryInline(admin.TabularInline):
+    model = Entry
+    extra = 1
+
+# Admin class for Venue
 class VenueAdmin(admin.ModelAdmin):
     list_display = ('name', 'view_events_link',)
+    inlines = [EventInline]
 
     def view_events_link(self, obj):
         url = reverse('admin:event_management_event_changelist') + f'?venue__id__exact={obj.pk}'
         return format_html('<a href="{}">View Events</a>', url)
-
     view_events_link.short_description = "Events"
 
-admin.site.register(Venue, VenueAdmin)
-
-class EventAdmin(admin.ModelAdmin):
+# Admin class for Event
+class EventAdmin(TreeAdmin, admin.ModelAdmin):  # Note: TreeAdmin is used if you want to keep tree functionalities
     list_display = ('name', 'get_depth', 'get_numchild', 'get_numraces', 'get_numentries')
     exclude = ('path', 'depth', 'numchild')
+    inlines = [RaceInline]
 
     def get_depth(self, obj):
         return f"Level {obj.depth} in the tree"
@@ -36,22 +53,46 @@ class EventAdmin(admin.ModelAdmin):
         return Entry.objects.filter(race__event=obj).count()
     get_numentries.short_description = "Number of Entries"
 
-admin.site.register(Event, EventAdmin)
-
+# Admin class for Race
 class RaceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'event', 'view_entries_link',)  # Corrected from view_participants_link to view_entries_link
+    list_display = ('name', 'event', 'view_entries_link',)
+    inlines = [EntryInline]
 
-    def view_entries_link(self, obj):  # Renamed method
+    def view_entries_link(self, obj):
         url = reverse('admin:event_management_entry_changelist') + f'?race__id__exact={obj.pk}'
         return format_html('<a href="{}">View Entries</a>', url)
-
     view_entries_link.short_description = "Entries"
 
-admin.site.register(Race, RaceAdmin)
-
-# Renamed from ParticipantAdmin to EntryAdmin to match your model name
+# EntryAdmin remains as you previously defined, no need for changes as it's the last level
 class EntryAdmin(admin.ModelAdmin):
     list_display = ('user', 'race', 'first_name', 'last_name', 'age_category', 'club_team_name', 'entry_close_datetime', 'transfer_close_datetime', 'is_archived',)
-    # Updated list_display to match the Entry model fields
 
+class EventAdmin(admin.ModelAdmin):
+    list_display = ('name', 'venue', 'date')
+    list_filter = ('venue', 'date')  # Filter by venue and date
+    search_fields = ('name', 'description')  # Search by event name and description
+    inlines = [RaceInline]
+
+class RaceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'event', 'start_time')
+    list_filter = ('event', 'start_time')  # Filter by event and start time
+    search_fields = ('name',)
+    inlines = [EntryInline]
+
+class EventAdminForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        exclude = ['depth', 'numchild']  # Exclude system-managed fields
+
+class EventAdmin(admin.ModelAdmin):
+    form = EventAdminForm
+    readonly_fields = ('last_modified',)  # Example of making a field read-only
+    inlines = [RaceInline]
+
+
+
+# Registration of admin classes
+admin.site.register(Venue, VenueAdmin)
+admin.site.register(Event, EventAdmin)
+admin.site.register(Race, RaceAdmin)
 admin.site.register(Entry, EntryAdmin)
