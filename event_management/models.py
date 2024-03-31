@@ -53,7 +53,6 @@ class Entry(models.Model):
     race = models.ForeignKey(Race, on_delete=models.CASCADE, related_name='entries')
     privacy_policy_accepted = models.BooleanField(default=False, verbose_name='I agree to the Privacy Policy')
     refund_policy_accepted = models.BooleanField(default=False, verbose_name='I agree to the Refund Policy')
-    terms_and_conditions = models.ForeignKey(TermsandConditions, on_delete=models.SET_NULL, null=True, blank=True, related_name='entries')
     terms_and_conditions_accepted = models.BooleanField(default=False, verbose_name='I agree to the Terms and Conditions')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
