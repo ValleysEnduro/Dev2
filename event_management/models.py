@@ -9,6 +9,7 @@ from core.models import RefundPolicy
 
 class Venue(models.Model):
     name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
     location = models.CharField(max_length=255)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
@@ -26,7 +27,7 @@ class Event(models.Model):
     name = models.CharField(max_length=100)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='events')
     date = models.DateField()
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
     is_completed = models.BooleanField(default=False)
     last_modified = models.DateTimeField(auto_now=True)
 
