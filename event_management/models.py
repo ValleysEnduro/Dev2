@@ -22,13 +22,12 @@ class Venue(models.Model):
     def __str__(self):
         return self.name
 
-class Event(MP_Node):
+class Event(models.Model):
     name = models.CharField(max_length=100)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='events')
     date = models.DateField()
     description = models.TextField(blank=True)
     last_modified = models.DateTimeField(auto_now=True)
-    node_order_by = ['name']
 
     def __str__(self):
         return self.name
@@ -39,6 +38,8 @@ class Race(models.Model):
     start_time = models.TimeField()
     age_categories = models.ManyToManyField(AgeCategory, related_name='races', blank=True)
     refund_policy = models.ForeignKey(RefundPolicy, on_delete=models.SET_NULL, null=True, blank=True, related_name='races')
+    entry_close_datetime = models.DateTimeField()
+    transfer_close_datetime = models.DateTimeField()
 
     def __str__(self):
         return self.name
@@ -52,8 +53,6 @@ class Entry(models.Model):
     last_name = models.CharField(max_length=100)
     age_category = models.ForeignKey(AgeCategory, on_delete=models.SET_NULL, null=True, blank=True)
     club_team_name = models.CharField(max_length=100, blank=True)
-    entry_close_datetime = models.DateTimeField()
-    transfer_close_datetime = models.DateTimeField()
     is_archived = models.BooleanField(default=False)
 
     def can_cancel(self):

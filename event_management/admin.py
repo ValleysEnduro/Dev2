@@ -48,6 +48,7 @@ class VenueAdmin(admin.ModelAdmin):
         url = reverse('admin:event_management_entry_changelist') + f'?race__event__venue__id__exact={obj.pk}'
         return format_html('<a href="{}">{}</a>', url, count)
     view_total_entries_link.short_description = 'Total Entries'
+
 # Admin class for Event
 class EventAdmin(TreeAdmin, admin.ModelAdmin):  # Note: TreeAdmin is used if you want to keep tree functionalities
     list_display = ('name', 'get_depth', 'get_numchild', 'get_numraces', 'get_numentries')
@@ -82,7 +83,7 @@ class RaceAdmin(admin.ModelAdmin):
 
 # EntryAdmin remains as you previously defined, no need for changes as it's the last level
 class EntryAdmin(admin.ModelAdmin):
-    list_display = ('user', 'race', 'first_name', 'last_name', 'age_category', 'club_team_name', 'entry_close_datetime', 'transfer_close_datetime', 'is_archived',)
+    list_display = ('user', 'race', 'first_name', 'last_name', 'age_category', 'club_team_name', 'is_archived',)
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'venue', 'date')
@@ -91,7 +92,7 @@ class EventAdmin(admin.ModelAdmin):
     inlines = [RaceInline]
 
 class RaceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'event', 'start_time')
+    list_display = ('name', 'event', 'start_time', 'entry_close_datetime', 'transfer_close_datetime',)
     list_filter = ('event', 'start_time')  # Filter by event and start time
     search_fields = ('name',)
     inlines = [EntryInline]
