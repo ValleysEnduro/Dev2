@@ -29,33 +29,25 @@ class EntryInline(admin.TabularInline):
 
 # Admin class for Venue
 class VenueAdmin(admin.ModelAdmin):
-    list_display = ('name', 'location', 'total_events', 'total_races', 'total_entries', 'view_events_link')
-    
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        # Prefetch events and races to minimize database hits, while annotating events with the count of races
-        events_prefetch = Prefetch('events', queryset=Event.objects.annotate(total_races_count=Count('races')))
-        queryset = queryset.prefetch_related(events_prefetch)
-        return queryset
+    list_display = ('name', 'location', 'view_total_events_link', 'view_total_races_link', 'view_total_entries_link')
 
-    def total_events(self, obj):
-        return obj.events.count()
-    total_events.short_description = 'Total Events'
-    
-    def total_races(self, obj):
-        # Since we've already prefetched and annotated events with their races count, sum those up
-        return sum(event.total_races_count for event in obj.events.all())
-    total_races.short_description = 'Total Races'
-
-    def total_entries(self, obj):
-        # Aggregate total entries across all races in all events for this venue
-        return Entry.objects.filter(race__event__venue=obj).count()
-    total_entries.short_description = 'Total Entries'
-
-    def view_events_link(self, obj):
+    def view_total_events_link(self, obj):
+        count = obj.events.count()
         url = reverse('admin:event_management_event_changelist') + f'?venue__id__exact={obj.pk}'
-        return format_html('<a href="{}">View Events</a>', url)
-    view_events_link.short_description = "Events"
+        return format_html('<a href="{}">{}</a>', url, count)
+    view_total_events_link.short_description = 'Total Events'
+
+    def view_total_races_link(self, obj):
+        count = Race.objects.filter(event__venue=obj).count()
+        url = reverse('admin:event_management_race_changelist') + f'?event__venue__id__exact={obj.pk}'
+        return format_html('<a href="{}">{}</a>', url, count)
+    view_total_races_link.short_description = 'Total Races'
+
+    def view_total_entries_link(self, obj):
+        count = Entry.objects.filter(race__event__venue=obj).count()
+        url = reverse('admin:event_management_entry_changelist') + f'?race__event__venue__id__exact={obj.pk}'
+        return format_html('<a href="{}">{}</a>', url, count)
+    view_total_entries_link.short_description = 'Total Entries'
 # Admin class for Event
 class EventAdmin(TreeAdmin, admin.ModelAdmin):  # Note: TreeAdmin is used if you want to keep tree functionalities
     list_display = ('name', 'get_depth', 'get_numchild', 'get_numraces', 'get_numentries')
