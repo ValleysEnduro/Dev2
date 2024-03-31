@@ -27,6 +27,8 @@ A lightningly fast, responsive and lightweight in appearance web app with awesom
     + Manage entries aligned with each race
     + Powerful page builder with analytics
     + Up to date SEO and social sharing practices
+    + Entry and participant management
+    + GDPR compliant practices
     + Kanban in the admin
 + Stripe and Paypal integration
 + Eccomerrce
