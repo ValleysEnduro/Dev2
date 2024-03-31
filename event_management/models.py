@@ -6,6 +6,7 @@ from imagekit.processors import ResizeToFill
 from django.utils import timezone
 from django.conf import settings
 from core.models import RefundPolicy
+from core.models import TermsandConditions
 
 class Venue(models.Model):
     name = models.CharField(max_length=100)
@@ -52,6 +53,8 @@ class Entry(models.Model):
     race = models.ForeignKey(Race, on_delete=models.CASCADE, related_name='entries')
     privacy_policy_accepted = models.BooleanField(default=False, verbose_name='I agree to the Privacy Policy')
     refund_policy_accepted = models.BooleanField(default=False, verbose_name='I agree to the Refund Policy')
+    terms_and_conditions = models.ForeignKey(TermsandConditions, on_delete=models.SET_NULL, null=True, blank=True, related_name='entries')
+    terms_and_conditions_accepted = models.BooleanField(default=False, verbose_name='I agree to the Terms and Conditions')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     age_category = models.ForeignKey(AgeCategory, on_delete=models.SET_NULL, null=True, blank=True)

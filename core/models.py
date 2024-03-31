@@ -42,3 +42,10 @@ class PrivacyPolicy(models.Model):
 
     def __str__(self):
         return f"Privacy Policy updated on {self.last_updated.strftime('%Y-%m-%d')}"
+
+class TermsandConditions(models.Model):
+    content = models.TextField(null=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Privacy Policy updated on {self.last_updated.strftime('%Y-%m-%d')}"

@@ -24,3 +24,9 @@ class PrivacyPolicyAdmin(SummernoteModelAdmin):
     summernote_fields = ('content',)
 
 admin.site.register(PrivacyPolicy, PrivacyPolicyAdmin)
+
+from .models import TermsandConditions
+class TermsandConditionsAdmin(SummernoteModelAdmin):
+    summernote_fields = ('content',)
+
+admin.site.register(TermsandConditions, TermsandConditionsAdmin)
