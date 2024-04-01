@@ -4,30 +4,7 @@
 <h2>Enter Race</h2>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-
-    <div>
-        {{ form.first_name.label_tag }}
-        {{ form.first_name }}
-        {{ form.first_name.errors }}
-    </div>
-
-    <div>
-        {{ form.privacy_policy_accepted }}
-        <label for="id_privacy_policy_accepted">
-            I agree to the <a href="{% url 'core:privacy_policy' %}" target="_blank">Privacy Policy</a>.
-        </label>
-        {{ form.privacy_policy_accepted.errors }}
-    </div>
-
-    <div>
-        {{ form.refund_policy_accepted }}
-        <label for="id_refund_policy_accepted">
-            I agree to the <a href="{% url 'core:refund_policy' %}" target="_blank">Refund Policy</a>.
-        </label>
-        {{ form.refund_policy_accepted.errors }}
-    </div>
-
-    <button type="submit">Submit Entry</button>
+    {{ form }}
+    <button type="submit">Submit</button>
 </form>
 {% endblock %}
