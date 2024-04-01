@@ -1,5 +1,5 @@
 ## Western Bike Events Event Management Web App
-Capstone event management application using Django. 
+Welcome to our capstone event management application using Django. 
 
 ### Warning
 Ensure you follow all laws and codes of practice in your country when processing personal and sensitive data. Security should be your top priority. I am not responsible if you have a breach. 
@@ -8,11 +8,17 @@ Ensure you follow all laws and codes of practice in your country when processing
 
 The Django admin takes time to get to grips with.
 
-### Maintenance Status
-This is an open source project and I'm a complete noob, it is not a maintained product. There is probably better ways of doing things but I will try to keep it up to date. I welcome contributions from the wider community. If you're interested, please get in touch.
+### Difficulty
 
-### Difficulty 
-To deploy this project will require some famailiarality with VS Code and Django. 
+You'll need to be familiair with:
+
++ VS Code
++ Django 
++ Python
++ Bootstrap 5
+
+### Maintenance Status
+This is an open source project and I'm a complete noob. There is probably better ways of doing things but I will try to keep it up to date. I welcome contributions from the wider community. If you're interested, please get in touch. 
 
 ### Vision
 A lightningly fast, responsive and lightweight in appearance web app with awesome SEO and analytics using bootstrap 5.
