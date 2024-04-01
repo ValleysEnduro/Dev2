@@ -19,5 +19,11 @@
     <a href="{% url 'blog:post_detail' slug=post.slug %}">{{ post.title }}</a>
   {% endfor %}
 </ul>
+
+<ul>
+  <a href="{% url 'core:my-entries' %}">My Entries</a>
+  <!-- Other navigation links -->
+</ul>
+
 {% endblock %}
 

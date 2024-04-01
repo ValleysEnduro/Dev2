@@ -40,4 +40,15 @@ def refund_policy_view(request):
     return render(request, 'core/refund_policy.html', {'policy': policy})
 
 
+# Inside your views.py
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from event_management.models import Entry
+
+@login_required
+def my_entries(request):
+    user_entries = Entry.objects.filter(user=request.user)
+    # Corrected template path
+    return render(request, 'users/my_entries.html', {'entries': user_entries})
 

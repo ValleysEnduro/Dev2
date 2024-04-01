@@ -1,0 +1,19 @@
+<!-- core/templates/core/my_entries.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>My Entries</h2>
+    {% if entries %}
+        <ul>
+            {% for entry in entries %}
+                <li>
+                    Race: {{ entry.race.name }}, Date: {{ entry.entry_date }},
+                    Accepted Terms: {{ entry.terms_and_conditions_accepted }}
+                    <!-- Add more fields as needed -->
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no entries.</p>
+    {% endif %}
+{% endblock %}
