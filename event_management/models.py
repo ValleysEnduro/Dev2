@@ -41,8 +41,8 @@ class Race(models.Model):
     start_time = models.TimeField()
     age_categories = models.ManyToManyField(AgeCategory, related_name='races', blank=True)
     refund_policy = models.ForeignKey(RefundPolicy, on_delete=models.SET_NULL, null=True, blank=True, related_name='races')
-    entry_close_datetime = models.DateTimeField()
-    transfer_close_datetime = models.DateTimeField()
+    entry_close_datetime = models.DateTimeField(help_text="Deadline after which no new entries are accepted.")
+    transfer_close_datetime = models.DateTimeField(help_text="Deadline after which entries cannot be transferred.")
     is_completed = models.BooleanField(default=False)
 
     def __str__(self):
