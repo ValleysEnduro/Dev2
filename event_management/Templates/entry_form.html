@@ -4,7 +4,7 @@
 <h2>Enter Race</h2>
 <form method="post">
     {% csrf_token %}
-    {{ form }}
-    <button type="submit">Submit</button>
+    {{ form.as_p }}
+    <button type="submit">Submit Entry</button>
 </form>
 {% endblock %}

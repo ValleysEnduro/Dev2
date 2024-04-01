@@ -1,9 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Race
 from .forms import EntryForm
 from django.http import HttpResponse
 from django.utils import timezone
-from django.shortcuts import render, get_object_or_404, redirect
 
 def entry_form(request, race_id):
     race = get_object_or_404(Race, id=race_id)
@@ -24,9 +23,4 @@ def entry_form(request, race_id):
     else:
         form = EntryForm()
 
-    return render(request, 'entry_form.html', {'race_id': race_id})
-
-def entry_form_view(request, race_id):
-    form = EntryForm()
     return render(request, 'entry_form.html', {'form': form, 'race_id': race_id})
-    
