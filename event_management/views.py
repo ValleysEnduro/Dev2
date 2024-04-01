@@ -26,5 +26,7 @@ def entry_form(request, race_id):
 
     return render(request, 'entry_form.html', {'race_id': race_id})
 
-
+def entry_form_view(request):
+    form = EntryForm()
+    return render(request, 'app_name/entry_form.html', {'form': form})
     

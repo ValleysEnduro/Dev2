@@ -22,7 +22,7 @@ urlpatterns = [
     path('blog/', include(('blog.urls', 'blog'), namespace='blog')),
     path('summernote/', include('django_summernote.urls')),
     path('core/', include(('core.urls', 'core'))),
-    path('event_management/', include('event_management.urls')),  # Include event_management URLs
+    path('event_management/', include(('event_management.urls', 'event_management'), namespace='event_management')),  # Include event_management URLs
     # Placeholder for when you're ready to add events
     # path('events/', include('events.urls')),
 ]
