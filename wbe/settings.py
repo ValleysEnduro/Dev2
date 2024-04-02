@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'core',
     'django_summernote',
     'mptt',
-    'events',
     'celery',
     
 ]
