@@ -2,7 +2,7 @@
 import factory
 from factory.django import DjangoModelFactory
 from faker import Faker
-from .models import Venue
+from .models import Venue, Event
 
 fake = Faker()
 
@@ -17,3 +17,14 @@ class VenueFactory(DjangoModelFactory):
     longitude = factory.LazyFunction(lambda: fake.longitude())
     # Assuming hero_image can be blank, we'll not generate images in tests to keep things simple
     # hero_image = <You could specify a method to generate test images if needed>
+
+class EventFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Event
+
+    name = factory.Faker('sentence', nb_words=4)
+    venue = factory.SubFactory(VenueFactory)
+    date = factory.Faker('future_date')
+    description = factory.Faker('paragraph')
+    is_completed = factory.Faker('boolean')
+

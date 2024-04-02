@@ -1,7 +1,7 @@
 # your_app_name/tests/test_models.py
 from django.test import TestCase
-from event_management.models import Venue
-from event_management.factories import VenueFactory
+from event_management.models import Venue, Event
+from event_management.factories import VenueFactory, EventFactory
 
 class VenueModelTest(TestCase):
     def test_venue_creation(self):
@@ -22,3 +22,14 @@ class VenueModelTest(TestCase):
         self.assertEqual(str(venue), venue_name)
 
 # Add more tests to cover specific behaviors or methods of your Venue model
+
+class EventModelTest(TestCase):
+    def test_event_creation(self):
+        event = EventFactory()
+        self.assertIsNotNone(event.name)
+        self.assertTrue(isinstance(event.venue, Venue))
+
+    def test_event_string_representation(self):
+        event_name = "Test Event"
+        event = EventFactory(name=event_name)
+        self.assertEqual(str(event), event_name)
