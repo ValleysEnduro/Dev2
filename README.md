@@ -1,5 +1,5 @@
 ## Western Bike Events Event Management Web App
-Welcome to our capstone event management application using Django. 
+Welcome to our capstone event management application using Django built with a test driven approach. 
 
 ### Warning
 Ensure you follow all laws and codes of practice in your country when processing personal and sensitive data. Security should be your top priority. I am not responsible if you have a breach. 
