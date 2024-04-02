@@ -19,7 +19,7 @@ def entry_form(request, race_id):
             if request.user.is_authenticated:
                 entry.user = request.user
             entry.save()
-            return redirect('event-page', event_id=race.event.id)
+            return redirect('homepage')
     else:
         form = EntryForm()
 
