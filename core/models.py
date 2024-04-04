@@ -49,3 +49,5 @@ class TermsandConditions(models.Model):
 
     def __str__(self):
         return f"Privacy Policy updated on {self.last_updated.strftime('%Y-%m-%d')}"
+    
+    

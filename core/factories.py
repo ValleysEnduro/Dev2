@@ -10,7 +10,7 @@ class RefundPolicyFactory(DjangoModelFactory):
     class Meta:
         model = RefundPolicy
 
-    name = factory.Faker('word')
+    name = factory.Faker('word')  # Correct field based on your model definition
     content = factory.Faker('paragraph')
-    cutoff_days = factory.Faker('random_int', min=1, max=90)
-    refund_percentage = factory.Faker('pydecimal', right_digits=2, positive=True, min_value=1, max_value=100)
+    cutoff_days = factory.Faker('random_int', min=1, max=30)
+    refund_percentage = factory.Faker('pydecimal', left_digits=2, right_digits=2, positive=True, min_value=1, max_value=100)
