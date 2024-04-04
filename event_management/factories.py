@@ -3,8 +3,10 @@ from factory.django import DjangoModelFactory
 from faker import Faker
 from .models import Venue, Event, AgeCategory, RefundPolicy, Race, Entry
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from datetime import timedelta
+from decimal import Decimal
 
-fake = Faker()
 
 fake = Faker()
 
@@ -43,9 +45,9 @@ class RefundPolicyFactory(DjangoModelFactory):
     class Meta:
         model = RefundPolicy
 
-    # Assuming RefundPolicy model has fields like 'policy_name' and 'cutoff_days'
-    policy_name = factory.Faker('word')
+    name = factory.Faker('word')  # Corrected from policy_name to name
     cutoff_days = factory.Faker('random_int', min=1, max=30)
+    refund_percentage = factory.Faker('pydecimal', left_digits=3, right_digits=2, positive=True)
 
 class RaceFactory(DjangoModelFactory):
     class Meta:
@@ -54,11 +56,11 @@ class RaceFactory(DjangoModelFactory):
     name = factory.Faker('sentence', nb_words=4)
     event = factory.SubFactory(EventFactory)
     start_time = factory.Faker('time_object')
-    # age_categories will be handled in tests, as it's a ManyToManyField
-    refund_policy = factory.SubFactory(RefundPolicyFactory)
-    entry_close_datetime = factory.Faker('future_datetime', end_datetime="+30d")
-    transfer_close_datetime = factory.Faker('future_datetime', end_datetime="+15d")
+    entry_close_datetime = factory.LazyFunction(lambda: timezone.now() + timedelta(days=30))
+    transfer_close_datetime = factory.LazyFunction(lambda: timezone.now() + timedelta(days=15))
     is_completed = factory.Faker('boolean')
+    entry_fee = factory.Faker('pydecimal', left_digits=4, right_digits=2, positive=True)  # Adding entry_fee with a positive decimal value
+    refund_policy = factory.SubFactory(RefundPolicyFactory, cutoff_days=10, refund_percentage=75)
 
 User = get_user_model()
 

@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.conf import settings
 from core.models import RefundPolicy
 from core.models import TermsandConditions
+from django.utils import timezone
+from datetime import datetime
 
 class Venue(models.Model):
     name = models.CharField(max_length=100)
@@ -39,6 +41,7 @@ class Race(models.Model):
     name = models.CharField(max_length=100)
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='races')
     start_time = models.TimeField()
+    entry_fee = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
     age_categories = models.ManyToManyField(AgeCategory, related_name='races', blank=True)
     refund_policy = models.ForeignKey(RefundPolicy, on_delete=models.SET_NULL, null=True, blank=True, related_name='races')
     entry_close_datetime = models.DateTimeField(help_text="Deadline after which no new entries are accepted.")
@@ -64,9 +67,14 @@ class Entry(models.Model):
     entry_date = models.DateField(auto_now_add=True)
 
     def can_cancel(self):
-        return self.race.refund_policy and timezone.now() <= self.race.event.date - timezone.timedelta(days=self.race.refund_policy.cutoff_days)
+        # Converts self.race.event.date to a datetime at midnight
+        event_datetime = datetime.combine(self.race.event.date, datetime.min.time())
+        event_datetime = timezone.make_aware(event_datetime, timezone.get_default_timezone())  # Make it timezone aware
+        
+        return self.race.refund_policy and timezone.now() <= event_datetime - timezone.timedelta(days=self.race.refund_policy.cutoff_days)
 
     def refund_amount(self):
         if self.can_cancel():
-            return self.entry_fee * (self.race.refund_policy.refund_percentage / 100)
+            # Assuming entry_fee is a field in the Race model, not Entry
+            return self.race.entry_fee * (self.race.refund_policy.refund_percentage / 100)
         return 0

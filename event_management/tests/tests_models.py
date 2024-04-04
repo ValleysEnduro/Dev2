@@ -2,6 +2,9 @@
 from django.test import TestCase
 from event_management.models import Venue, Event, Race, Entry
 from event_management.factories import VenueFactory, EventFactory, RaceFactory, EntryFactory
+from decimal import Decimal
+
+
 
 class VenueModelTest(TestCase):
     def test_venue_creation(self):
@@ -59,9 +62,21 @@ class EntryModelTest(TestCase):
         self.assertTrue(entry.can_cancel())
 
     def test_entry_refund_amount(self):
-        race = RaceFactory(event__date=timezone.now() + timedelta(days=30),
-                           refund_policy__cutoff_days=10,
-                           refund_policy__refund_percentage=75)
+        # Setting up a race with specific entry fee and refund policy
+        entry_fee = Decimal("100.00")  # Example entry fee
+        refund_percentage = Decimal("75.00")  # Example refund percentage
+        race = RaceFactory(entry_fee=entry_fee, refund_policy__refund_percentage=refund_percentage)
         entry = EntryFactory(race=race)
 
-        self.assertEqual(entry.refund_amount(), 0)  # Adjust based on your model's logic
+        # Calculate expected refund amount based on the setup
+        expected_refund_amount = (entry_fee * refund_percentage) / Decimal("100.00")
+
+        # Assert the calculated refund amount matches the expected
+        self.assertEqual(entry.refund_amount(), expected_refund_amount)
+
+    def can_cancel(self):
+    # Ensure both are date objects for comparison
+        current_date = timezone.now().date()  # Converts datetime to date
+        event_date = self.race.event.date  # Assuming this is already a date object
+        cutoff = event_date - timezone.timedelta(days=self.race.refund_policy.cutoff_days)
+        return self.race.refund_policy and current_date <= cutoff
