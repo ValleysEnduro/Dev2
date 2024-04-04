@@ -9,10 +9,10 @@ class EntryFormTest(TestCase):
         # Using factories to create a race and a user
         self.user = UserFactory()
         self.race = RaceFactory(
-            start_time=datetime.time(10, 0),
+            start_time=timezone.localtime().time(),  # Adjusted to use local time
             entry_fee=25.00,
-            entry_close_datetime=datetime.datetime.now() + datetime.timedelta(days=30),
-            transfer_close_datetime=datetime.datetime.now() + datetime.timedelta(days=15),
+            entry_close_datetime=timezone.now() + timedelta(days=30),  # Adjusted to be timezone-aware
+            transfer_close_datetime=timezone.now() + timedelta(days=15),  # Adjusted to be timezone-aware
         )
 
     def test_form_validation_and_save(self):

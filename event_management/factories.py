@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal
+from django.utils import timezone
+from datetime import timedelta
 
 
 fake = Faker()
