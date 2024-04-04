@@ -62,16 +62,26 @@ class EntryModelTest(TestCase):
         self.assertTrue(entry.can_cancel())
 
     def test_entry_refund_amount(self):
-        # Setting up a race with specific entry fee and refund policy
-        entry_fee = Decimal("100.00")  # Example entry fee
-        refund_percentage = Decimal("75.00")  # Example refund percentage
-        race = RaceFactory(entry_fee=entry_fee, refund_policy__refund_percentage=refund_percentage)
+    # Ensure the race's event date is in the future, allowing for refunds
+        future_date = timezone.now() + timedelta(days=30)
+        entry_fee = Decimal("100.00")
+        refund_percentage = Decimal("75.00")
+
+        # Create a race with a future event date and specified refund policy
+        race = RaceFactory(
+            entry_fee=entry_fee,
+            refund_policy__refund_percentage=refund_percentage,
+            event__date=future_date.date(),  # Assuming the event factory takes a date object
+            entry_close_datetime=timezone.now() + timedelta(days=29),  # Directly using timezone-aware datetime
+            transfer_close_datetime=timezone.now() + timedelta(days=15),  # Directly using timezone-aware datetime
+        )
+        
         entry = EntryFactory(race=race)
 
-        # Calculate expected refund amount based on the setup
+        # Calculate the expected refund amount
         expected_refund_amount = (entry_fee * refund_percentage) / Decimal("100.00")
 
-        # Assert the calculated refund amount matches the expected
+        # Assert that the calculated refund amount matches the expected
         self.assertEqual(entry.refund_amount(), expected_refund_amount)
 
     def can_cancel(self):
