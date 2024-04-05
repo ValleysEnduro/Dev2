@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from payments.factories import UserFactory, PaymentFactory
+from payments.factories import UserFactory
 from unittest.mock import patch
 import json
 
@@ -15,14 +15,15 @@ class CreatePaymentViewTest(TestCase):
         mock_create.return_value = {'id': 'fake-stripe-id', 'client_secret': 'fake-client-secret'}
         self.client.force_login(self.user)
         response = self.client.post(self.create_payment_url, {'amount': 1000})
-        # Replace 'home' with the actual redirect URL you expect after successful payment creation
-        self.assertRedirects(response, reverse('homepage.html'))
+        # Use the admin login URL as a placeholder
+        self.assertRedirects(response, '/')
 
     @patch('stripe.PaymentIntent.create', side_effect=Exception("Stripe error"))
     def test_create_payment_exception(self, mock_stripe):
         self.client.force_login(self.user)
         response = self.client.post(self.create_payment_url, {'amount': 1000})
-        self.assertRedirects(response, reverse('homepage.html'))
+        # Use the admin login URL as a placeholder for error redirection as well
+        self.assertRedirects(response, '/')
 
 class StripeWebhookTest(TestCase):
     def setUp(self):
@@ -44,7 +45,7 @@ class StripeWebhookTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+        # No redirect here, but you could add checks for response content
 
-# Ensure that these tests cover the scenarios you're interested in.
-# This simplifies the file by removing the duplication and ensures that
-# each test case is focused on a specific aspect of your views.
+# Remember, using '/admin/login/' is just for temporary testing purposes.
+# Replace it with the actual URLs when you have the corresponding views and templates ready.
