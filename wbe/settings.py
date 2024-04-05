@@ -1,4 +1,5 @@
 import os
+import environ
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -134,5 +135,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+# Initialize environ
+env = environ.Env()
+# Read .env file
+environ.Env.read_env()
+
+# Use the variables, with defaults as necessary
+DEBUG = env.bool('DEBUG', default=False)
+SECRET_KEY = env('SECRET_KEY')
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
