@@ -104,3 +104,10 @@ def create_entry(request, race_id):
     return redirect(session.url, code=303)
 
 
+from django.http import HttpResponse
+
+def payment_success(request):
+    return HttpResponse("Payment succeeded")
+
+def payment_error(request):
+    return HttpResponse("Payment failed")

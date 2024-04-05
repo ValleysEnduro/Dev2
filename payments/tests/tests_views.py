@@ -16,14 +16,14 @@ class CreatePaymentViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.post(self.create_payment_url, {'amount': 1000})
         # Use the admin login URL as a placeholder
-        self.assertRedirects(response, '/')
+        self.assertRedirects(response, reverse('payments:payment_success'))
 
     @patch('stripe.PaymentIntent.create', side_effect=Exception("Stripe error"))
     def test_create_payment_exception(self, mock_stripe):
         self.client.force_login(self.user)
         response = self.client.post(self.create_payment_url, {'amount': 1000})
         # Use the admin login URL as a placeholder for error redirection as well
-        self.assertRedirects(response, '/')
+        self.assertRedirects(response, reverse('payments:payment_error'))
 
 class StripeWebhookTest(TestCase):
     def setUp(self):
@@ -45,7 +45,3 @@ class StripeWebhookTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        # No redirect here, but you could add checks for response content
-
-# Remember, using '/admin/login/' is just for temporary testing purposes.
-# Replace it with the actual URLs when you have the corresponding views and templates ready.
