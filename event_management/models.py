@@ -9,6 +9,7 @@ from core.models import RefundPolicy
 from core.models import TermsandConditions
 from django.utils import timezone
 from datetime import datetime
+from payments.models import Payment
 
 class Venue(models.Model):
     name = models.CharField(max_length=100)
@@ -65,6 +66,7 @@ class Entry(models.Model):
     club_team_name = models.CharField(max_length=100, blank=True)
     is_archived = models.BooleanField(default=False)
     entry_date = models.DateField(auto_now_add=True)
+    payment = models.OneToOneField(Payment, on_delete=models.SET_NULL, null=True, blank=True, related_name='entry')
 
     def can_cancel(self):
         # Converts self.race.event.date to a datetime at midnight
