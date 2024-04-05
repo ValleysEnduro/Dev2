@@ -8,6 +8,7 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, default='pending')  # Example choices could be 'pending', 'completed', 'failed'
     timestamp = models.DateTimeField(auto_now_add=True)
+    stripe_payment_id = models.CharField(max_length=255, blank=True, null=True)
     
     # GenericForeignKey setup
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
