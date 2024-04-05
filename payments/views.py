@@ -8,6 +8,9 @@ from django.urls import reverse
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.contenttypes.models import ContentType
+from .models import Payment, Product, RaceEntry
 
 
 
@@ -15,8 +18,8 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def create_payment(request, *args, **kwargs):
     if request.method == 'POST':
-        # Assume you have a form to get the amount and product details
-        # For demonstration, we'll use a fixed amount and associate the payment with a user
+        # Simulated product or associated object retrieval/creation
+        product = Product.objects.first()  # Simplified for example purposes
         amount = 1000  # $10.00 in cents
         try:
             payment_intent = stripe.PaymentIntent.create(
@@ -24,21 +27,21 @@ def create_payment(request, *args, **kwargs):
                 currency='usd',
                 payment_method_types=['card'],
             )
+            content_type = ContentType.objects.get_for_model(product)
             payment = Payment.objects.create(
                 user=request.user,
                 amount=amount / 100,  # Converting cents to dollars
                 stripe_payment_id=payment_intent['id'],
                 status='pending',  # or other initial status
+                content_type=content_type,
+                object_id=product.id,
             )
             # Redirect to a page where the user can complete the payment
-            # This is usually a page with Stripe Elements to securely capture payment details
-            return redirect('payment_page', payment_id=payment.id)
+            return HttpResponseRedirect(reverse('payment_page', args=[payment.id]))  # Adjust the URL name as necessary
         except Exception as e:
-            # Handle the error
-            print(e)
-            # Redirect to an error page or show an error message
-            return redirect('error_page')
-    # Render your payment form template
+            # Handle the error by redirecting to a generic error handling view or URL
+            return HttpResponseRedirect(reverse('home'))  # Use an existing URL as a fallback
+    # Render your payment form template if GET request
     return render(request, 'payments/create_payment.html')
 
 @csrf_exempt
