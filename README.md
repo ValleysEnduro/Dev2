@@ -1,12 +1,12 @@
-[![Maintainability](https://api.codeclimate.com/v1/badges/<your_maintainability_badge_id>/maintainability)](https://codeclimate.com/github/<your_username>/<your_repo>/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/0ee8e4756f132486a849/maintainability)](https://codeclimate.com/github/ValleysEnduro/Dev2/maintainability)
 
-[![Test Coverage](https://api.codeclimate.com/v1/badges/<your_test_coverage_badge_id>/test_coverage)](https://codeclimate.com/github/<your_username>/<your_repo>/test_coverage)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/0ee8e4756f132486a849/test_coverage)](https://codeclimate.com/github/ValleysEnduro/Dev2/test_coverage)
 
 [![Coverage Status](https://coveralls.io/repos/github/<your_username>/<your_repo>/badge.svg?branch=main)](https://coveralls.io/github/<your_username>/<your_repo>?branch=main)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=<your_project_key>&metric=alert_status)](https://sonarcloud.io/dashboard?id=<your_project_key>)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ValleysEnduro_Dev2&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ValleysEnduro_Dev2)
 
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=<your_project_key>&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=<your_project_key>)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=ValleysEnduro_Dev2&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=ValleysEnduro_Dev2)
 
 
 ## Western Bike Events Event Management Web App
