@@ -15,7 +15,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-m%g6hob62b^v&+=g1yk4cg5e2w^134f5zmx!)e4-wb0=&jy#j&'
+env = environ.Env()
+# Read .env file
+environ.Env.read_env()
+
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -135,11 +139,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Initialize environ
-env = environ.Env()
-# Read .env file
-environ.Env.read_env()
-
+STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
 # Use the variables, with defaults as necessary
 DEBUG = env.bool('DEBUG', default=False)
 SECRET_KEY = env('SECRET_KEY')
