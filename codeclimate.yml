@@ -1,5 +1,10 @@
 version: "2"
 exclude_patterns:
-  - "migrations/"
+  - "**/migrations/"
+  - "**/static/"
+  - "**/__pycache__/"
+  - "**/*.css"
+  - "**/*.js"
+  - "vendor/"
   - "env/"
-  - "**/django/**"
+  - "config/settings/"
