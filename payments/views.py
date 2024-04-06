@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, redirect
 from django.conf import settings
 from .models import Payment
@@ -14,7 +15,7 @@ from .models import Payment, Product, RaceEntry
 
 
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+endpoint_secret = os.environ.get('STRIPE_ENDPOINT_SECRET')
 
 def create_payment(request, *args, **kwargs):
     if request.method == 'POST':
@@ -48,7 +49,7 @@ def create_payment(request, *args, **kwargs):
 def stripe_webhook(request):
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-    endpoint_secret = 'your_endpoint_secret'
+    endpoint_secret = os.environ.get('STRIPE_ENDPOINT_SECRET')
     event = None
 
     try:
