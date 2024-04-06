@@ -1,10 +1,37 @@
 version: "2"
+
+checks:
+  argument-count:
+    config:
+      threshold: 4
+  complex-logic:
+    config:
+      threshold: 4
+  file-lines:
+    config:
+      threshold: 500
+  method-complexity:
+    config:
+      threshold: 5
+  method-count:
+    config:
+      threshold: 20
+  method-lines:
+    config:
+      threshold: 25
+  nested-control-flow:
+    config:
+      threshold: 4
+  return-statements:
+    config:
+      threshold: 4
+  similar-code:
+    enabled: false
+plugins:
+  bandit:
+    enabled: true
 exclude_patterns:
+  - "content_migration/"
   - "**/migrations/"
-  - "**/static/"
-  - "**/__pycache__/"
-  - "**/*.css"
-  - "**/*.js"
-  - "vendor/"
-  - "env/"
-  - "config/settings/"
+  - "**/__init__.py"
+  - "**/tests.py"
