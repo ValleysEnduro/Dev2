@@ -142,5 +142,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
 # Use the variables, with defaults as necessary
 DEBUG = env.bool('DEBUG', default=False)
-SECRET_KEY = env('SECRET_KEY')
+
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
