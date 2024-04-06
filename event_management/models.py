@@ -13,7 +13,7 @@ from payments.models import Payment
 
 class Venue(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True)
     location = models.CharField(max_length=255)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
@@ -31,7 +31,7 @@ class Event(models.Model):
     name = models.CharField(max_length=100)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='events')
     date = models.DateField()
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True)
     is_completed = models.BooleanField(default=False)
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -61,7 +61,7 @@ class Entry(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True)
-    email = models.CharField(max_length=100, null=True)
+    email = models.CharField(max_length=100, blank=True)
     age_category = models.ForeignKey(AgeCategory, on_delete=models.SET_NULL, null=True, blank=True)
     club_team_name = models.CharField(max_length=100, blank=True)
     is_archived = models.BooleanField(default=False)
