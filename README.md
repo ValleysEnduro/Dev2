@@ -7,6 +7,8 @@ Welcome to our capstone event management application using Django built with a t
 ### Warning
 Ensure you follow all laws and codes of practice in your country when processing personal and sensitive data. Security should be your top priority. I am not responsible if you have a breach. 
 
+This website is built to practices outlined by the ICO in the UK.
+
 ### Caution
 
 The Django admin takes time to get to grips with.
@@ -130,5 +132,5 @@ To follow
 
 ### Acknowledgement
 
-I built this with the assistance of ChatGPT Django co-pilot, Github co-pilot, Code With Django over on YouTube and of course Django documentation.
+I built this with the assistance of Open AIs Django co-pilot, Github co-pilot, Code With Django, all the tutorials over on YouTube and of course Django documentation.
 
