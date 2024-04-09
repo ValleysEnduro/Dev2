@@ -21,7 +21,7 @@ You'll need to be familiair with:
 + Bootstrap 5
 
 ### Maintenance Status
-This is an open source project and I'm a complete noob. There is probably better ways of doing things but I will try to keep it up to date. I welcome contributions from the wider community. If you're interested, please get in touch. 
+Be warned, this is an open source project and I'm an amateur developer. There is probably better ways of doing things but I will try to keep it up to date. I welcome contributions from the wider community. If you're interested, please get in touch. I've done my best to use coverage reproting, edge case testing and ensuring my code base is reliable and maintainable.
 
 ### Vision
 A lightningly fast, responsive and lightweight in appearance web app with awesome SEO and analytics using bootstrap 5.
