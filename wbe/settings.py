@@ -144,3 +144,17 @@ STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
+
+# settings.py
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn="https://d9eabe8b6d66adaa68208ffdea98d43d@o4507180425281536.ingest.de.sentry.io/4507180427051088",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
