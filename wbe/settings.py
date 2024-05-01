@@ -24,7 +24,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'django_summernote',
     'mptt',
     'celery',
-    'payments', 
+    'payments',
+    'users', 
     
 ]
 
@@ -158,3 +159,4 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     profiles_sample_rate=1.0,
 )
+

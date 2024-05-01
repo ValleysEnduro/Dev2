@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Welcome, {{ user.username }}!</h2>
+
+    <!-- Display General Entries -->
+    <div class="mt-4">
+        <h3>Your General Entries</h3>
+        {% if entries %}
+            <ul>
+                {% for entry in entries %}
+                    <li>{{ entry.name }} on {{ entry.date|date:"F d, Y" }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You have no general entries.</p>
+        {% endif %}
+    </div>
+
+    <!-- Display Race Entries -->
+    <div class="mt-4">
+        <h3>Your Race Entries</h3>
+        {% if race_entries %}
+            <ul>
+                {% for race_entry in race_entries %}
+                    <li>{{ race_entry.race.name }} on {{ race_entry.race.date|date:"F d, Y" }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You have no race entries.</p>
+        {% endif %}
+    </div>
+
+    <!-- Display Payments -->
+    <div class="mt-4">
+        <h3>Your Payments</h3>
+        {% if payments %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>${{ payment.amount|floatformat:2 }}</td>
+                        <td>{{ payment.status }}</td>
+                        <td>{{ payment.timestamp|date:"F d, Y H:i" }}</td>
+                        <td>{{ payment.content_object }}</td> <!-- You might want to adjust how to display this based on your application's needs -->
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No payments found.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

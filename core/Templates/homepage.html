@@ -13,7 +13,7 @@
   {% endif %}
 </div>
 
-<h2>Kobi</h2>
+<h2>Blog</h2>
 <ul>
     {% for post in posts %}
     <a href="{% url 'blog:post_detail' slug=post.slug %}">{{ post.title }}</a>
@@ -21,11 +21,11 @@
 </ul>
 
 <ul>
-  <a href="{% url 'core:my-entries' %}">My Entries</a>
+  <a href="{% url 'users : dashboard.html' %}">Dashboard</a>
   <!-- Other navigation links -->
 </ul>
 
-<h3> form entry <h3/>
+<h3> Enter here <h3/>
 
 <ul>
   <a href="{% url 'event_management:entry_form' race_id=1 %}">Enter Race 1</a>

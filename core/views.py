@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import HomePage
 from blog.models import Post  # Adjust based on your actual model import
 
+
 def homepage_view(request):
     homepage_content = HomePage.objects.first()  # Assuming there's at least one HomePage instance
     posts = Post.objects.all().order_by('-created_on')[:5]
@@ -10,22 +11,6 @@ def homepage_view(request):
         'posts': posts
     }
     return render(request, 'homepage.html', context)
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
-from event_management.models import Entry
-
-@login_required
-def cancel_entry(request, entry_id):
-    entry = get_object_or_404(Entry, id=entry_id, user=request.user)
-    if entry.can_cancel():
-        refund = entry.refund_amount()
-        entry.delete()
-        messages.success(request, f"Your entry has been successfully canceled. Refund: {refund}")
-    else:
-        messages.error(request, "Cancellation period has passed.")
-    return redirect('your-redirect-url')
 
 from .models import PrivacyPolicy
 
@@ -40,15 +25,4 @@ def refund_policy_view(request):
     return render(request, 'core/refund_policy.html', {'policy': policy})
 
 
-# Inside your views.py
-
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from event_management.models import Entry
-
-@login_required
-def my_entries(request):
-    user_entries = Entry.objects.filter(user=request.user)
-    # Corrected template path
-    return render(request, 'users/my_entries.html', {'entries': user_entries})
 
