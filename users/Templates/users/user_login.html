@@ -14,15 +14,29 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" class="form-control" required>
+            <input type="text" id="username" name="username" class="form-control" aria-describedby="usernameHelp" required>
+            <small id="usernameHelp" class="form-text text-muted">Enter your registered username.</small>
         </div>
         <div class="form-group">
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" class="form-control" required>
+            <input type="password" id="password" name="password" class="form-control" aria-describedby="passwordHelp" required>
+            <small id="passwordHelp" class="form-text text-muted">Enter your password.</small>
+            <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="togglePasswordVisibility()">Show Password</button>
         </div>
         <button type="submit" class="btn btn-primary">Login</button>
     </form>
-   <!-- <p>Don't have an account? <a href="{% url 'users:register' %}">Register here</a></p> -->
-    <!--<p>Forgot your password? <a href="{% url 'users:password_reset' %}">Reset it here</a></p>-->
+    <p>Don't have an account? <a href="{% url 'users:register' %}">Register here</a>.</p>
+    <p>Forgot your password? <a href="{% url 'users:password_reset' %}">Reset it here</a>.</p>
 </div>
+
+<script>
+function togglePasswordVisibility() {
+    var x = document.getElementById("password");
+    if (x.type === "password") {
+        x.type = "text";
+    } else {
+        x.type = "password";
+    }
+}
+</script>
 {% endblock %}
