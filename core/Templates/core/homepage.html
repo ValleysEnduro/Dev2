@@ -13,6 +13,18 @@
   {% endif %}
 </div>
 
+<div class="container">
+  <!-- Dynamic Button for Login or Account Management -->
+  {% if user.is_authenticated %}
+      <a href="{% url 'users:dashboard' %}" class="btn btn-primary">My Account</a>
+      <a href="{% url 'users:logout' %}" class="btn btn-secondary">Logout</a>
+  {% else %}
+      <a href="{% url 'users:login' %}" class="btn btn-primary">Login</a>
+  {% endif %}
+  <!-- Content of the homepage -->
+  <p>Welcome to Our Site!</p>
+</div>
+
 <h2>Blog</h2>
 <ul>
     {% for post in posts %}
@@ -21,7 +33,7 @@
 </ul>
 
 <ul>
-  <a href="{% url 'users : dashboard.html' %}">Dashboard</a>
+
   <!-- Other navigation links -->
 </ul>
 

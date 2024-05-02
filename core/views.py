@@ -1,28 +1,26 @@
-from django.shortcuts import render
-from .models import HomePage
-from blog.models import Post  # Adjust based on your actual model import
-
-
-def homepage_view(request):
-    homepage_content = HomePage.objects.first()  # Assuming there's at least one HomePage instance
-    posts = Post.objects.all().order_by('-created_on')[:5]
-    context = {
-        'homepage_content': homepage_content,  # Make sure this is correct
-        'posts': posts
-    }
-    return render(request, 'homepage.html', context)
-
-from .models import PrivacyPolicy
-
-def privacy_policy_view(request):
-    policy = PrivacyPolicy.objects.latest('last_updated')
-    return render(request, 'core/privacy_policy.html', {'policy': policy})
-
+from django.shortcuts import render, get_object_or_404
+from django.http import Http404
+from .models import HomePage, PrivacyPolicy
+from blog.models import Post
 from event_management.models import RefundPolicy
 
+def homepage_view(request):
+    homepage_content = HomePage.objects.first()
+    if not homepage_content:
+        raise Http404("No HomePage content is available")
+    posts = Post.objects.all().order_by('-created_on')[:5]
+    context = {
+        'homepage_content': homepage_content,
+        'posts': posts
+    }
+    return render(request, 'core/homepage.html', context)
+
+def privacy_policy_view(request):
+    policy = get_object_or_404(PrivacyPolicy, slug='current')  # Assuming you use a slug to identify current policy
+    return render(request, 'core/privacy_policy.html', {'policy': policy})
+
 def refund_policy_view(request):
-    policy = RefundPolicy.objects.first()  # Assuming you have a single refund policy
+    policy = RefundPolicy.objects.first()
+    if not policy:
+        raise Http404("Refund policy not found")
     return render(request, 'core/refund_policy.html', {'policy': policy})
-
-
-

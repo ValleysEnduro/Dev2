@@ -66,7 +66,7 @@ ROOT_URLCONF = 'wbe.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -160,3 +160,4 @@ sentry_sdk.init(
     profiles_sample_rate=1.0,
 )
 
+LOGIN_URL = '/users/login/'

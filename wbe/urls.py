@@ -12,7 +12,7 @@ urlpatterns = [
     path('core/', include(('core.urls', 'core'))),
     path('event_management/', include(('event_management.urls', 'event_management'), namespace='event_management')),
     path('payments/', include('payments.urls', namespace='payments')),
-    path('users/', include('users.urls', namespace='users')),
+    path('users/', include(('users.urls', 'users'), namespace='users')),
     # Placeholder for future paths
     # path('events/', include('events.urls')),
     # Add other apps' URLs here...
