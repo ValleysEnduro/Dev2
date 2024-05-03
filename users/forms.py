@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
+from .models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)  # Makes email required
@@ -15,6 +16,19 @@ class CustomUserCreationForm(UserCreationForm):
         user.email = self.cleaned_data['email']  # This is somewhat redundant unless you have specific logic to handle
         if self.cleaned_data.get('avatar'):
             user.avatar = self.cleaned_data['avatar']
+        if commit:
+            user.save()
+        return user
+
+#avatar = forms.ImageField(required=False)  # Ensures avatar is optional
+
+class AvatarForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['avatar']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
         if commit:
             user.save()
         return user

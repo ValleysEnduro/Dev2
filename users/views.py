@@ -8,6 +8,7 @@ except ImportError as e:
     print("sys.path is", sys.path, file=sys.stderr)
 
 import logging
+from .forms import CustomUserCreationForm, AvatarForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -18,6 +19,7 @@ from .forms import CustomUserCreationForm
 from event_management.models import Entry
 from payments.models import Payment, RaceEntry
 from django.http import HttpResponseRedirect
+from .models import CustomUser
 
 
 logger = logging.getLogger(__name__)
@@ -75,3 +77,17 @@ def register(request):
 
 def redirect_to_profile(request):
     return HttpResponseRedirect(reverse('users:profile'))
+
+@login_required
+def profile_view(request):
+    if request.method == 'POST':
+        form = AvatarForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Avatar updated successfully!')
+            return redirect('users:profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = AvatarForm(instance=request.user)
+    return render(request, 'users/profile.html', {'form': form})
