@@ -23,12 +23,8 @@ class CustomUserCreationForm(UserCreationForm):
 #avatar = forms.ImageField(required=False)  # Ensures avatar is optional
 
 class AvatarForm(forms.ModelForm):
+    avatar = forms.ImageField(label='Select an avatar', required=False)
+
     class Meta:
         model = CustomUser
         fields = ['avatar']
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        if commit:
-            user.save()
-        return user

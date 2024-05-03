@@ -1,30 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div id="avatar-section">
+    <h3>Update Avatar</h3>
+    <form id="avatarForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="{{ form.avatar.id_for_label }}">Avatar:</label>
+        {{ form.avatar }} <!-- Explicitly rendering the avatar field -->
+        <button type="submit">Update Avatar</button>
+    </form>
+</div>
 
-<h2>User Profile</h2>
-  {% if user.avatar %}
-    <img src="{{ user.avatar.url }}" alt="Your avatar" width="150">
-  {% else %}
-    <p>No avatar uploaded.</p>
-  {% endif %}
-
-  <h3>Update Avatar</h3>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update Avatar</button>
-  </form>
-
-<div class="container mt-4">
+<div class="mt-4">
     <h2>Welcome, {{ user.username }}!</h2>
 
     <!-- Display General Entries -->
     <div class="mt-4">
         <h3>Your General Entries</h3>
-        {% if entries %}
+        {% if user_entries %}
             <ul>
-                {% for entry in entries %}
+                {% for entry in user_entries %}
                     <li>{{ entry.name }} on {{ entry.date|date:"F d, Y" }}</li>
                 {% endfor %}
             </ul>
@@ -36,9 +31,9 @@
     <!-- Display Race Entries -->
     <div class="mt-4">
         <h3>Your Race Entries</h3>
-        {% if race_entries %}
+        {% if user_race_entries %}
             <ul>
-                {% for race_entry in race_entries %}
+                {% for race_entry in user_race_entries %}
                     <li>{{ race_entry.race.name }} on {{ race_entry.race.date|date:"F d, Y" }}</li>
                 {% endfor %}
             </ul>
@@ -50,7 +45,7 @@
     <!-- Display Payments -->
     <div class="mt-4">
         <h3>Your Payments</h3>
-        {% if payments %}
+        {% if user_payments %}
             <table class="table">
                 <thead>
                     <tr>
@@ -61,12 +56,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for payment in payments %}
+                    {% for payment in user_payments %}
                     <tr>
                         <td>${{ payment.amount|floatformat:2 }}</td>
                         <td>{{ payment.status }}</td>
                         <td>{{ payment.timestamp|date:"F d, Y H:i" }}</td>
-                        <td>{{ payment.content_object }}</td> <!-- You might want to adjust how to display this based on your application's needs -->
+                        <td>{{ payment.content_object }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -75,6 +70,26 @@
             <p>No payments found.</p>
         {% endif %}
     </div>
-
 </div>
+
+<script>
+function submitAvatarForm() {
+    const form = document.getElementById('avatarForm');
+    const formData = new FormData(form);
+    fetch('{{ request.path }}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Accept': 'text/html',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('avatar-section').innerHTML = html;
+    })
+    .catch(error => console.error('Error updating avatar:', error));
+}
+</script>
 {% endblock %}

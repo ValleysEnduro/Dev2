@@ -1,39 +1,45 @@
 import sys
-
-try:
-    from event_management.models import Entry, Race
-    from users.models import CustomUser
-except ImportError as e:
-    print("Error importing:", e, file=sys.stderr)
-    print("sys.path is", sys.path, file=sys.stderr)
-
 import logging
-from .forms import CustomUserCreationForm, AvatarForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
-from .models import CustomUser
-from .forms import CustomUserCreationForm
-from event_management.models import Entry
+from .forms import CustomUserCreationForm, AvatarForm
+from event_management.models import Entry, Race
 from payments.models import Payment, RaceEntry
-from django.http import HttpResponseRedirect
-from .models import CustomUser
-
+from django.http import HttpResponseRedirect, HttpResponse
+from django.template.loader import render_to_string
 
 logger = logging.getLogger(__name__)
 
-@login_required
-def dashboard(request):
-    context = {
-        'user_entries': Entry.objects.filter(user=request.user).prefetch_related('events'),
-        'user_race_entries': RaceEntry.objects.filter(participant=request.user).select_related('race'),
-        'user_payments': Payment.objects.filter(user=request.user).select_related('race_entry'),
+# Helper function to fetch common user-related data
+def get_user_related_data(user):
+    return {
+        'user_entries': Entry.objects.filter(user=user).prefetch_related('events'),
+        'user_race_entries': RaceEntry.objects.filter(participant=user).select_related('race'),
+        'user_payments': Payment.objects.filter(user=user).select_related('entry'),
     }
+
+# Decorator for common logging and redirections
+def log_and_redirect(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        try:
+            return view_func(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error in {view_func.__name__}: {str(e)}", exc_info=sys.exc_info())
+            messages.error(request, "An unexpected error occurred.")
+            return redirect('users:dashboard')
+    return _wrapped_view
+
+@login_required
+@log_and_redirect
+def dashboard(request):
+    context = get_user_related_data(request.user)
     return render(request, 'users/dashboard.html', context)
 
 @login_required
+@log_and_redirect
 def cancel_entry(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id, user=request.user)
     if not entry.can_cancel():
@@ -47,7 +53,7 @@ def cancel_entry(request, entry_id):
 def login_view(request):
     if request.method == 'POST':
         user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
-        if user is not None:
+        if user:
             login(request, user)
             return redirect('users:dashboard')
         messages.error(request, 'Invalid username or password')
@@ -69,8 +75,7 @@ def register(request):
             user = form.save()
             messages.success(request, f'Account created for {user.username}!')
             return redirect('users:login')
-        else:
-            messages.error(request, 'Please correct the below errors.')
+        messages.error(request, 'Please correct the below errors.')
     else:
         form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form})
@@ -79,15 +84,15 @@ def redirect_to_profile(request):
     return HttpResponseRedirect(reverse('users:profile'))
 
 @login_required
-def profile_view(request):
+def dashboard_view(request):
     if request.method == 'POST':
         form = AvatarForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Avatar updated successfully!')
-            return redirect('users:profile')
+            return redirect('dashboard')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
         form = AvatarForm(instance=request.user)
-    return render(request, 'users/profile.html', {'form': form})
+    return render(request, 'users/dashboard.html', {'form': form})
