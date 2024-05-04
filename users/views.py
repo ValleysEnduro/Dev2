@@ -37,6 +37,13 @@ def log_and_redirect(view_func):
 def dashboard(request):
     context = get_user_related_data(request.user)
     return render(request, 'users/dashboard.html', context)
+def get_user_related_data(user):
+    return {
+        'user_race_entries': Entry.objects.filter(user=user)
+                                          .select_related('race', 'age_category')
+                                          .order_by('first_name', 'last_name'),
+        'user_payments': Payment.objects.filter(user=user).select_related('entry'),
+    }
 
 @login_required
 @log_and_redirect
