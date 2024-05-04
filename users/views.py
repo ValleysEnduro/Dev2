@@ -83,16 +83,25 @@ def register(request):
 def redirect_to_profile(request):
     return HttpResponseRedirect(reverse('users:profile'))
 
-@login_required
-def dashboard_view(request):
+def update_avatar(request):
     if request.method == 'POST':
         form = AvatarForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Avatar updated successfully!')
-            return redirect('dashboard')
-        else:
-            messages.error(request, 'Please correct the error below.')
+            messages.success(request, 'Your avatar has been updated successfully!')
+            return redirect('profile')  # Redirect to a relevant page
     else:
         form = AvatarForm(instance=request.user)
-    return render(request, 'users/dashboard.html', {'form': form})
+    
+    return render(request, 'users/update_avatar.html', {'form': form})
+
+@login_required
+def delete_avatar(request):
+    user = request.user
+    if user.avatar:
+        user.avatar.delete()  # This deletes the file and clears the field
+        user.save()
+        messages.success(request, "Avatar deleted successfully!")
+    else:
+        messages.error(request, "No avatar to delete.")
+    return redirect('users:dashboard')

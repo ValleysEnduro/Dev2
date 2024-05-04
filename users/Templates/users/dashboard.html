@@ -2,11 +2,15 @@
 
 {% block content %}
 <div id="avatar-section">
+    {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="{{ user.username }}'s avatar" width="150">
+    {% else %}
+        <p>No avatar uploaded.</p>
+    {% endif %}
     <h3>Update Avatar</h3>
-    <form id="avatarForm" method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <label for="{{ form.avatar.id_for_label }}">Avatar:</label>
-        {{ form.avatar }} <!-- Explicitly rendering the avatar field -->
+        {{ form.as_p }}
         <button type="submit">Update Avatar</button>
     </form>
 </div>
