@@ -18,33 +18,55 @@
 <div class="mt-4">
     <h2>Welcome, {{ user.username }}!</h2>
 
-    <!-- Display General Entries -->
-    <div class="mt-4">
-        <h3>Your General Entries</h3>
-        {% if user_entries %}
-            <ul>
-                {% for entry in user_entries %}
-                    <li>{{ entry.name }} on {{ entry.date|date:"F d, Y" }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>You have no general entries.</p>
-        {% endif %}
-    </div>
-
-    <!-- Display Race Entries -->
-    <div class="mt-4">
-        <h3>Your Race Entries</h3>
-        {% if user_race_entries %}
-            <ul>
-                {% for race_entry in user_race_entries %}
-                    <li>{{ race_entry.race.name }} on {{ race_entry.race.date|date:"F d, Y" }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>You have no race entries.</p>
-        {% endif %}
-    </div>
+ <!-- Display Race Entries -->
+ <h2>Your Race Entries</h2>
+ {% if user_race_entries %}
+     <table>
+         <thead>
+             <tr>
+                 <th>Race</th>
+                 <th>First Name</th>
+                 <th>Last Name</th>
+                 <th>Age Category</th>
+                 <th>Club/Team</th>
+                 <th>Edit</th>
+                 <th>Transfer</th>
+             </tr>
+         </thead>
+         <tbody>
+             {% for entry in user_race_entries %}
+                 <tr>
+                     <td>{{ entry.race.name }}</td>
+                     <td>{{ entry.first_name }}</td>
+                     <td>{{ entry.last_name }}</td>
+                     <td>{{ entry.age_category }}</td>
+                     <td>{{ entry.club_team_name }}</td>
+                     <td>
+                         <!-- Inline Entry Edit Form -->
+                         <form method="post">
+                             {% csrf_token %}
+                             {{ entry_form.as_p }}
+                             <input type="hidden" name="entry_id" value="{{ entry.id }}">
+                             <button type="submit" name="entry_form">Update Entry</button>
+                         </form>
+                     </td>
+                     <td>
+                         <!-- Inline Entry Transfer Form -->
+                         <form method="post">
+                             {% csrf_token %}
+                             {{ transfer_form.as_p }}
+                             <input type="hidden" name="entry_id" value="{{ entry.id }}">
+                             <button type="submit" name="transfer_form">Transfer Entry</button>
+                         </form>
+                     </td>
+                 </tr>
+             {% endfor %}
+         </tbody>
+     </table>
+ {% else %}
+     <p>You have no race entries.</p>
+ {% endif %}
+</div>
 
     <!-- Display Payments -->
     <div class="mt-4">
