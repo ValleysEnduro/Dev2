@@ -1,20 +1,17 @@
 import os
+import stripe
 from django.shortcuts import render, redirect
 from django.conf import settings
-from .models import Payment
-import stripe
-# In payments/views.py
-from event_management.models import Race, Entry
 from django.urls import reverse
-# Create your views here.
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.http import require_POST
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.contenttypes.models import ContentType
 from .models import Payment, Product, RaceEntry
+from event_management.models import Race
 
-
-
+# Set the Stripe API key globally
+stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = os.environ.get('STRIPE_ENDPOINT_SECRET')
 
 def create_payment(request, *args, **kwargs):
@@ -22,6 +19,7 @@ def create_payment(request, *args, **kwargs):
         # Simulated product or associated object retrieval/creation
         product = Product.objects.first()  # Simplified for example purposes
         amount = 1000  # $10.00 in cents
+
         try:
             payment_intent = stripe.PaymentIntent.create(
                 amount=amount,
@@ -40,16 +38,17 @@ def create_payment(request, *args, **kwargs):
             # Redirect to a page where the user can complete the payment
             return HttpResponseRedirect(reverse('payment_page', args=[payment.id]))  # Adjust the URL name as necessary
         except Exception as e:
-            # Handle the error by redirecting to a generic error handling view or URL
+            # Log the error and redirect to a generic error handling view or URL
+            print(f'Error creating payment: {e}')
             return HttpResponseRedirect(reverse('home'))  # Use an existing URL as a fallback
     # Render your payment form template if GET request
     return render(request, 'payments/create_payment.html')
 
+@require_POST
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
-    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-    endpoint_secret = os.environ.get('STRIPE_ENDPOINT_SECRET')
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
     event = None
 
     try:
@@ -58,32 +57,38 @@ def stripe_webhook(request):
         )
     except ValueError as e:
         # Invalid payload
-        return HttpResponse(status=400)
+        print(f'Invalid payload: {e}')
+        return JsonResponse({'error': 'Invalid payload'}, status=400)
     except stripe.error.SignatureVerificationError as e:
         # Invalid signature
-        return HttpResponse(status=400)
+        print(f'Invalid signature: {e}')
+        return JsonResponse({'error': 'Invalid signature'}, status=400)
 
     # Handle the event
-    if event['type'] == 'payment_intent.succeeded':
-        payment_intent = event['data']['object']  # contains a stripe.PaymentIntent
-        # Update your Payment model based on Stripe's payment intent ID
-        # e.g., mark the payment as completed
-    # ... handle other event types
+    try:
+        if event['type'] == 'payment_intent.succeeded':
+            payment_intent = event['data']['object']
+            # Update your Payment model based on Stripe's payment intent ID
+            payment = Payment.objects.filter(stripe_payment_id=payment_intent['id']).first()
+            if payment:
+                payment.status = 'completed'
+                payment.save()
+                print(f'PaymentIntent {payment_intent["id"]} succeeded.')
+            else:
+                print(f'PaymentIntent {payment_intent["id"]} not found in database.')
+        else:
+            print(f'Unhandled event type: {event["type"]}')
 
-    return HttpResponse(status=200)
-
-# event_management/views.py
-
-
-stripe.api_key = settings.STRIPE_SECRET_KEY
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        # Log the error
+        print(f'Error processing event: {e}')
+        return JsonResponse({'error': 'An error occurred'}, status=500)
 
 def create_entry(request, race_id):
     race = Race.objects.get(id=race_id)
-    
-    # Calculate the amount to be paid
     amount = int(race.entry_fee * 100)  # Convert to cents
-    
-    # Create a Stripe Checkout Session
+
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
         line_items=[{
@@ -100,12 +105,8 @@ def create_entry(request, race_id):
         success_url=request.build_absolute_uri(reverse('entry_success', args=[race_id])) + '?session_id={CHECKOUT_SESSION_ID}',
         cancel_url=request.build_absolute_uri(reverse('entry_cancel', args=[race_id])),
     )
-    
-    # Redirect to Stripe Checkout
+
     return redirect(session.url, code=303)
-
-
-from django.http import HttpResponse
 
 def payment_success(request):
     return HttpResponse("Payment succeeded")
