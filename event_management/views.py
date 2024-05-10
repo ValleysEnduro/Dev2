@@ -1,15 +1,21 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, HttpResponseForbidden
+from django.utils import timezone
+from django.views.decorators.http import require_http_methods
 from .models import Race
 from .forms import EntryForm
-from django.http import HttpResponse
-from django.utils import timezone
 
+@require_http_methods(["GET", "POST"])
 def entry_form(request, race_id):
     race = get_object_or_404(Race, id=race_id)
+
+    # Check if the entry submission deadline has passed
     if timezone.now() > race.entry_close_datetime:
-        return HttpResponse("Entry submissions are closed for this race.", status=403)
+        return HttpResponseForbidden("Entry submissions are closed for this race.")
+    
+    # Check if the transfer submission deadline has passed
     if timezone.now() > race.transfer_close_datetime:
-        return HttpResponse("Transfer submissions are closed for this race.", status=403)
+        return HttpResponseForbidden("Transfer submissions are closed for this race.")
 
     if request.method == 'POST':
         form = EntryForm(request.POST)
@@ -19,9 +25,13 @@ def entry_form(request, race_id):
             if request.user.is_authenticated:
                 entry.user = request.user
             entry.save()
-            return redirect('homepage')
+            return redirect('homepage')  # Redirect to a relevant page after successful form submission
     else:
         form = EntryForm()
 
-    return render(request, 'entry_form.html', {'form': form, 'race_id': race_id})
+    context = {
+        'form': form,
+        'race': race
+    }
 
+    return render(request, 'event_management/entry_form.html', context)  # Ensure this path is correct
