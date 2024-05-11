@@ -32,6 +32,7 @@ def log_and_redirect(view_func):
             return redirect('users:dashboard')
     return _wrapped_view
 
+# View for dashboard
 @login_required
 @log_and_redirect
 @require_GET
@@ -39,6 +40,7 @@ def dashboard(request):
     context = get_user_related_data(request.user)
     return render(request, 'users/dashboard.html', context)
 
+# View to cancel an entry
 @login_required
 @log_and_redirect
 @require_POST
@@ -52,7 +54,9 @@ def cancel_entry(request, entry_id):
         messages.success(request, f"Entry canceled. Refund: {refund}")
     return redirect('users:dashboard')
 
+# View for user login
 @require_http_methods(["GET", "POST"])
+@log_and_redirect
 def login_view(request):
     if request.method == 'POST':
         user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
@@ -63,18 +67,24 @@ def login_view(request):
         return JsonResponse({'success': False, 'error': 'Invalid username or password'})
     return render(request, 'users/user_login.html')
 
+# View for user profile
 @login_required
+@log_and_redirect
 @require_GET
 def profile_view(request):
     return render(request, 'users/profile.html')
 
+# View to log out user
 @require_GET
+@log_and_redirect
 def logout_view(request):
     logout(request)
     messages.success(request, "Successfully logged out.")
     return redirect('users:login')
 
+# View for user registration
 @require_http_methods(["GET", "POST"])
+@log_and_redirect
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST, request.FILES)
@@ -88,12 +98,16 @@ def register(request):
         form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 
+# View to redirect to profile
 @login_required
+@log_and_redirect
 @require_GET
 def redirect_to_profile(request):
     return HttpResponseRedirect(reverse('users:profile'))
 
+# View to update user avatar
 @login_required
+@log_and_redirect
 @require_http_methods(["GET", "POST"])
 def update_avatar(request):
     if request.method == 'POST':
@@ -107,7 +121,9 @@ def update_avatar(request):
         form = AvatarForm(instance=request.user)
     return render(request, 'users/update_avatar.html', {'form': form})
 
+# View to delete user avatar
 @login_required
+@log_and_redirect
 @require_POST
 def delete_avatar(request):
     user = request.user
