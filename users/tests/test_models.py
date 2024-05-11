@@ -1,7 +1,10 @@
 from django.test import TestCase
 from django.contrib.auth.models import Group, Permission
 from users.models import CustomUser, Purchase
+from django.core.files.uploadedfile import SimpleUploadedFile
 from users.factories import CustomUserFactory, PurchaseFactory
+import os
+from django.conf import settings
 
 class CustomUserTestCase(TestCase):
     def test_custom_user_creation(self):
@@ -15,10 +18,12 @@ class CustomUserTestCase(TestCase):
         group = Group.objects.create(name='Test Group')
         permission = Permission.objects.create(
             name='Can do something',
-            content_type_id=1,  # Use appropriate content type ID
+            content_type_id=1,  # Use appropriate content type ID for your app
             codename='can_do_something'
         )
-        user = CustomUserFactory(groups=[group], user_permissions=[permission])
+        user = CustomUserFactory()
+        user.groups.set([group])
+        user.user_permissions.set([permission])
         self.assertIn(group, user.groups.all())
         self.assertIn(permission, user.user_permissions.all())
 
@@ -34,4 +39,28 @@ class PurchaseTestCase(TestCase):
 class CustomUserEdgeCaseTestCase(TestCase):
     def test_custom_user_without_avatar(self):
         user = CustomUserFactory(avatar=None)
-        self.assertTrue(user.avatar is None or not user.avatar.name)  # Check if avatar is None or has no name
+        self.assertTrue(user.avatar is None or not user.avatar.name)
+
+class CustomUserModelTest(TestCase):
+    def test_avatar_field_handling(self):
+        user = CustomUser.objects.create_user(
+            username='testuser2',
+            password='testpassword2'
+        )
+        avatar = SimpleUploadedFile(
+            name='test_avatar.jpg',
+            content=b'fake-image-content',
+            content_type='image/jpeg'
+        )
+        user.avatar.save('test_avatar.jpg', avatar)
+        user.save()
+
+        # Construct the expected file path
+        expected_path = os.path.join(settings.MEDIA_ROOT, 'avatars', 'test_avatar.jpg')
+        
+        # Verify the file exists at the expected location
+        self.assertTrue(os.path.exists(expected_path), f"File not found at {expected_path}")
+
+        # Clean up
+        if os.path.exists(expected_path):
+            os.remove(expected_path)

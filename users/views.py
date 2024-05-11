@@ -35,9 +35,19 @@ def log_and_redirect(view_func):
 # View for dashboard
 @login_required
 @log_and_redirect
-@require_GET
+@require_http_methods(["GET", "POST"])
 def dashboard(request):
+    if request.method == 'POST':
+        form = AvatarForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your avatar has been updated successfully!')
+            return redirect('users:dashboard')
+    else:
+        form = AvatarForm(instance=request.user)
+    
     context = get_user_related_data(request.user)
+    context['form'] = form
     return render(request, 'users/dashboard.html', context)
 
 # Separate GET and POST for cancel_entry

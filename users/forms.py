@@ -13,14 +13,12 @@ class CustomUserCreationForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.email = self.cleaned_data['email']  # This is somewhat redundant unless you have specific logic to handle
+        user.email = self.cleaned_data['email']
         if self.cleaned_data.get('avatar'):
             user.avatar = self.cleaned_data['avatar']
         if commit:
             user.save()
         return user
-
-#avatar = forms.ImageField(required=False)  # Ensures avatar is optional
 
 class AvatarForm(forms.ModelForm):
     avatar = forms.ImageField(label='Select an avatar', required=False)
@@ -28,3 +26,4 @@ class AvatarForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['avatar']
+
