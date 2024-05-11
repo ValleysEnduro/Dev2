@@ -1,0 +1,13 @@
+<!-- templates/users/confirm_logout.html -->
+{% extends "base.html" %}
+{% block content %}
+<article>
+    <h2>Confirm Logout</h2>
+    <p>Are you sure you want to log out?</p>
+    <form method="post" action="{% url 'users:perform_logout' %}">
+        {% csrf_token %}
+        <button type="submit">Yes, log me out</button>
+        <a href="{% url 'users:dashboard' %}">Cancel</a>
+    </form>
+</article>
+{% endblock %}

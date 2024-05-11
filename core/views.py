@@ -5,23 +5,15 @@ from .models import HomePage, PrivacyPolicy
 from blog.models import Post
 from event_management.models import RefundPolicy
 
-@require_http_methods(["GET"])
 def homepage_view(request):
-    # Fetch the first HomePage content
     homepage_content = HomePage.objects.first()
     if not homepage_content:
         raise Http404("No HomePage content is available")
-    
-    # Fetch the latest 5 blog posts
     posts = Post.objects.all().order_by('-created_on')[:5]
-    
-    # Build the context dictionary
     context = {
         'homepage_content': homepage_content,
-        'latest_posts': posts
+        'posts': posts
     }
-    
-    # Render the homepage template with the context
     return render(request, 'core/homepage.html', context)
 
 @require_http_methods(["GET"])

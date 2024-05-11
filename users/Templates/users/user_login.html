@@ -1,42 +1,13 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="container mt-5">
-    <h2>Login</h2>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li {% if message.tags %}class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    <form method="post" action="{% url 'users:login' %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" class="form-control" aria-describedby="usernameHelp" required>
-            <small id="usernameHelp" class="form-text text-muted">Enter your registered username.</small>
-        </div>
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" class="form-control" aria-describedby="passwordHelp" required>
-            <small id="passwordHelp" class="form-text text-muted">Enter your password.</small>
-            <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="togglePasswordVisibility()">Show Password</button>
-        </div>
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-    <p>Don't have an account? <a href="{% url 'users:register' %}">Register here</a>.</p>
-    <p>Forgot your password? <a href="{% url 'users:password_reset' %}">Reset it here</a>.</p>
-</div>
-
-<script>
-function togglePasswordVisibility() {
-    var x = document.getElementById("password");
-    if (x.type === "password") {
-        x.type = "text";
-    } else {
-        x.type = "password";
-    }
-}
-</script>
+<h2>Login</h2>
+<form id="loginForm" method="post" action="{% url 'users:perform_login' %}">
+    {% csrf_token %}
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <button type="submit">Login</button>
+</form>
+<div id="result"></div>
 {% endblock %}

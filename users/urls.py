@@ -1,3 +1,4 @@
+# users/urls.py
 from django.urls import path
 from .views import (
     register_view, register_user, login_view, perform_login,

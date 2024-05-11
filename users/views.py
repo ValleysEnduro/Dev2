@@ -6,10 +6,10 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
-from .forms import CustomUserCreationForm, AvatarForm
-from event_management.models import Entry, Race
-from payments.models import Payment, RaceEntry
 from django.http import HttpResponseRedirect, JsonResponse
+from .forms import CustomUserCreationForm, AvatarForm
+from event_management.models import Entry
+from payments.models import Payment, RaceEntry
 
 logger = logging.getLogger(__name__)
 

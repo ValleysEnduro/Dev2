@@ -2,51 +2,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <script type="application/ld+json">
         {% block structured_data %}
         {
           "@context": "http://schema.org",
           "@type": "www.western-bike-events.wales",
-          "name": "Your Site Name",
+          "name": "Western Bike Events",
           "url": "https://www.western-bike-events.wales",
           "potentialAction": {
             "@type": "SearchAction",
-            "target": "http://www.yoursite.com/search/?q={search_term_string}",
+            "target": "http://www.western-bike-events.wales/search/?q={search_term_string}",
             "query-input": "required name=search_term_string"
           }
         }
         {% endblock structured_data %}
-        </script>
-
-    <title>{% block title %}My Blog{% endblock %}</title>
-
+    </script>
+    <title>{% block title %}Western Bike Events{% endblock %}</title>
+    <style>
+        /* Basic styling for navbar */
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+        }
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        nav ul li {
+            margin-right: 1rem;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-
 <body>
-
     <header>
-        <!-- Header content here -->
+        <h1>Western Bike Events</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'homepage' %}">Home</a></li>
+                <li><a href="{% url 'users:dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'users:profile_view' %}">Profile</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'users:logout_view' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'users:login_view' %}">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
     </header>
-
-    <nav>
-        <!-- Navigation here -->
-    </nav>
-
     <main>
         {% block content %}
-        
+        <!-- Default content -->
         <h2>Static Test Content</h2>
         <p>If you see this, block content is working.</p>
-
         {% endblock %}
     </main>
-
     <footer>
-        <!-- Footer content here -->
+        <p>&copy; 2024 Western Bike Events. All rights reserved.</p>
     </footer>
 </body>
 </html>

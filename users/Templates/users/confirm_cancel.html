@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Confirm Cancel Entry</h2>
+<p>Are you sure you want to cancel your entry for {{ entry.event.name }}?</p>
+<form method="post" action="{% url 'users:cancel_entry' entry.id %}">
+    {% csrf_token %}
+    <button type="submit">Cancel Entry</button>
+    <a href="{% url 'users:dashboard' %}">Go back</a>
+</form>
+{% endblock %}
