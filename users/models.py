@@ -1,10 +1,20 @@
-from django.contrib.auth.models import AbstractUser
+import os
+from django.utils.text import slugify
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+
+def user_avatar_upload_to(instance, filename):
+    # Slugify the username to create a clean filename
+    username_slug = slugify(instance.username)
+    # Extract file extension from the original filename
+    extension = os.path.splitext(filename)[1]
+    # Construct the new filename using username and original extension
+    new_filename = f"{username_slug}{extension}"
+    # Define the upload path under 'avatars/' directory
+    return os.path.join('avatars', new_filename)
 
 class CustomUser(AbstractUser):
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    avatar = models.ImageField(upload_to=user_avatar_upload_to, null=True, blank=True)
     groups = models.ManyToManyField(
         'auth.Group',
         verbose_name='groups',
