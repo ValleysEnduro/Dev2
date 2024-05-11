@@ -15,17 +15,17 @@
         <th>Actions</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="entries-tbody">
       {% for entry in user_entries %}
-        <tr>
+        <tr id="entry-{{ entry.id }}">
           <td>{{ entry.race.name }}</td>
           <td>{{ entry.first_name }}</td>
           <td>{{ entry.last_name }}</td>
           <td>{{ entry.entry_date }}</td>
           <td>
-            <form action="{% url 'users:cancel_entry' entry.id %}" method="post" style="display:inline;">
+            <form class="cancel-entry-form" action="{% url 'users:cancel_entry' entry.id %}" method="post" style="display:inline;">
               {% csrf_token %}
-              <button type="submit" onclick="return confirm('Are you sure you want to cancel this entry?');">Cancel</button>
+              <button type="submit">Cancel</button>
             </form>
           </td>
         </tr>
@@ -60,4 +60,42 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <script>
+    document.querySelectorAll('.cancel-entry-form').forEach(form => {
+      form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+        if (confirm('Are you sure you want to cancel this entry?')) {
+          const url = this.action;
+          const csrfToken = this.querySelector('[name=csrfmiddlewaretoken]').value;
+          const entryRow = this.closest('tr');
+
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ csrfmiddlewaretoken: csrfToken })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              entryRow.remove();
+              alert('Entry canceled successfully.');
+              if (document.querySelectorAll('#entries-tbody tr').length === 0) {
+                document.querySelector('#entries-tbody').innerHTML = '<tr><td colspan="5">No entries found.</td></tr>';
+              }
+            } else {
+              alert('Error: ' + data.error);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+          });
+        }
+      });
+    });
+  </script>
 {% endblock %}

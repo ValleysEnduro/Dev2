@@ -7,10 +7,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
-from django.http import HttpResponseRedirect, JsonResponse
-from django.apps import apps  # Added this import
+from django.http import JsonResponse, HttpResponseRedirect
+from django.apps import apps
+from django.middleware.csrf import get_token
 from .forms import CustomUserCreationForm
-from .utils import get_user_related_data  # Import the updated utils function
+from .utils import get_user_related_data
 
 logger = logging.getLogger(__name__)
 
@@ -43,18 +44,18 @@ def confirm_cancel_entry(request, entry_id):
     return render(request, 'users/confirm_cancel.html', {'entry': entry})
 
 @login_required
-@log_and_redirect
 @require_POST
 def cancel_entry(request, entry_id):
     Entry = apps.get_model('event_management', 'Entry')
     entry = get_object_or_404(Entry, id=entry_id, user=request.user)
     if not entry.can_cancel():
         messages.error(request, "Cancellation period has passed.")
+        return JsonResponse({'success': False, 'error': 'Cancellation period has passed.'})
     else:
         refund = entry.refund_amount()
         entry.delete()
         messages.success(request, f"Entry canceled. Refund: {refund}")
-    return JsonResponse({'success': True, 'redirect_url': reverse('users:dashboard')})
+        return JsonResponse({'success': True})
 
 # Separate GET and POST for login_view
 @log_and_redirect
