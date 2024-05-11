@@ -1,3 +1,4 @@
+# users/views.py
 import sys
 import logging
 from django.shortcuts import render, get_object_or_404, redirect
@@ -7,7 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from django.http import HttpResponseRedirect, JsonResponse
-from .forms import CustomUserCreationForm, AvatarForm
+from .forms import CustomUserCreationForm  # Removed AvatarForm import
 from event_management.models import Entry
 from payments.models import Payment, RaceEntry
 
@@ -37,17 +38,7 @@ def log_and_redirect(view_func):
 @log_and_redirect
 @require_http_methods(["GET", "POST"])
 def dashboard(request):
-    if request.method == 'POST':
-        form = AvatarForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Your avatar has been updated successfully!')
-            return redirect('users:dashboard')
-    else:
-        form = AvatarForm(instance=request.user)
-    
     context = get_user_related_data(request.user)
-    context['form'] = form
     return render(request, 'users/dashboard.html', context)
 
 # Separate GET and POST for cancel_entry
@@ -92,17 +83,7 @@ def perform_login(request):
 @log_and_redirect
 @require_GET
 def profile_view(request):
-    if request.method == 'POST':
-        form = AvatarForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            logger.info("Form is valid, saving avatar.")
-            form.save()
-            return redirect('profile')
-        else:
-            logger.error("Form is not valid: %s", form.errors)
-    else:
-        form = AvatarForm(instance=request.user)
-
+    form = CustomUserCreationForm(instance=request.user)
     return render(request, 'profile.html', {'form': form})
 
 # Separate GET and POST for logout_view
@@ -130,7 +111,7 @@ def register_view(request):
 @log_and_redirect
 @require_POST
 def register_user(request):
-    form = CustomUserCreationForm(request.POST, request.FILES)
+    form = CustomUserCreationForm(request.POST)
     if form.is_valid():
         user = form.save()
         messages.success(request, f'Account created for {user.username}!')
@@ -144,36 +125,3 @@ def register_user(request):
 @require_GET
 def redirect_to_profile(request):
     return HttpResponseRedirect(reverse('users:profile'))
-
-# Separate GET and POST for update_avatar
-@login_required
-@log_and_redirect
-@require_GET
-def update_avatar_view(request):
-    form = AvatarForm(instance=request.user)
-    return render(request, 'users/update_avatar.html', {'form': form})
-
-@login_required
-@log_and_redirect
-@require_POST
-def update_avatar(request):
-    form = AvatarForm(request.POST, request.FILES, instance=request.user)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Your avatar has been updated successfully!')
-        return JsonResponse({'success': True, 'redirect_url': reverse('users:profile')})
-    return JsonResponse({'success': False, 'error': form.errors.as_json()})
-
-# View to delete user avatar
-@login_required
-@log_and_redirect
-@require_POST
-def delete_avatar(request):
-    user = request.user
-    if user.avatar:
-        user.avatar.delete()
-        user.save()
-        messages.success(request, "Avatar deleted successfully!")
-    else:
-        messages.error(request, "No avatar to delete.")
-    return JsonResponse({'success': True, 'redirect_url': reverse('users:dashboard')})

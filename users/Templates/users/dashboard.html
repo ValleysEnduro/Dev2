@@ -1,19 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="avatar-section">
-    {% if user.avatar %}
-        <img src="{{ user.avatar.url }}" alt="{{ user.username }}'s avatar" width="150">
-    {% else %}
-        <p>No avatar uploaded.</p>
-    {% endif %}
-    <h3>Update Avatar</h3>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Update Avatar</button>
-    </form>
-</div>
 
 <div class="mt-4">
     <h2>Welcome, {{ user.username }}!</h2>

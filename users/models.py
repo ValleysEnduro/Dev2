@@ -1,17 +1,10 @@
 # users/models.py
-import os
 from django.utils.text import slugify
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-def user_avatar_upload_to(instance, filename):
-    username_slug = slugify(instance.username)
-    extension = os.path.splitext(filename)[1]
-    new_filename = f"{username_slug}{extension}"
-    return os.path.join('avatars', new_filename)
-
 class CustomUser(AbstractUser):
-    avatar = models.ImageField(upload_to=user_avatar_upload_to, null=True, blank=True)
+    # Removed avatar field
     groups = models.ManyToManyField(
         'auth.Group',
         verbose_name='groups',

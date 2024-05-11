@@ -1,17 +1,24 @@
 # users/tests/test_utils.py
 from django.test import TestCase
-from users.models import CustomUser, user_avatar_upload_to
-from django.utils.text import slugify
+from users.models import CustomUser
 import os
+from django.conf import settings
 
-class FilePathGenerationTest(TestCase):
-    def test_user_avatar_upload_to(self):
-        user = CustomUser(username='testuser3')
-        filename = 'test_avatar.jpg'
-        expected_slug = slugify(user.username)
-        expected_path = os.path.join('avatars', f'{expected_slug}.jpg')
-        
-        actual_path = user_avatar_upload_to(user, filename)
-        
-        # Verify the file path matches expected format
-        self.assertEqual(actual_path, expected_path, f"Generated path {actual_path} does not match expected {expected_path}")
+class CustomUserUtilityTest(TestCase):
+    def test_custom_user_creation_without_avatar(self):
+        user = CustomUser.objects.create_user(
+            username='testuser_no_avatar',
+            password='testpassword'
+        )
+        # Ensure user is created successfully
+        self.assertIsInstance(user, CustomUser)
+        self.assertEqual(user.username, 'testuser_no_avatar')
+
+    def test_custom_user_creation_with_email(self):
+        user = CustomUser.objects.create_user(
+            username='testuser_email',
+            password='testpassword',
+            email='testuser@example.com'
+        )
+        # Ensure user email is set correctly
+        self.assertEqual(user.email, 'testuser@example.com')
