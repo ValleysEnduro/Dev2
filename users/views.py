@@ -92,7 +92,18 @@ def perform_login(request):
 @log_and_redirect
 @require_GET
 def profile_view(request):
-    return render(request, 'users/profile.html')
+    if request.method == 'POST':
+        form = AvatarForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            logger.info("Form is valid, saving avatar.")
+            form.save()
+            return redirect('profile')
+        else:
+            logger.error("Form is not valid: %s", form.errors)
+    else:
+        form = AvatarForm(instance=request.user)
+
+    return render(request, 'profile.html', {'form': form})
 
 # Separate GET and POST for logout_view
 @login_required

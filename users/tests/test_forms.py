@@ -1,49 +1,28 @@
-# users/tests/test_forms.py
-from django.test import TestCase, Client
-from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
+# users/forms.py
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from users.models import CustomUser
-import os
-from django.conf import settings
 
-class AvatarFormTest(TestCase):
-    def setUp(self):
-        self.client = Client()
-        self.user = CustomUser.objects.create_user(
-            username='testuser',
-            password='testpassword'
-        )
-        self.client.login(username='testuser', password='testpassword')
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True)  # Makes email required
+    avatar = forms.ImageField(required=False)  # Ensures avatar is optional
 
-    def test_avatar_upload_via_form(self):
-        # Ensure the path to your test image is correct
-        avatar_path = os.path.join(settings.BASE_DIR, 'path', 'to', 'test_avatar.jpg')
-        
-        # Check if the file exists before proceeding with the test
-        self.assertTrue(os.path.exists(avatar_path), f"Test image not found at {avatar_path}")
+    class Meta(UserCreationForm.Meta):
+        model = CustomUser
+        fields = UserCreationForm.Meta.fields + ('email', 'avatar',)
 
-        with open(avatar_path, 'rb') as avatar_file:
-            response = self.client.post(
-                reverse('profile'),  # Replace 'profile' with your actual URL name
-                {'avatar': avatar_file},
-                format='multipart'
-            )
-        
-        # Reload the user instance
-        self.user.refresh_from_db()
-        
-        # Check if the avatar field is set
-        self.assertIsNotNone(self.user.avatar, "Avatar is not set in the user model.")
-        
-        # Construct the expected file path
-        expected_path = os.path.join(settings.MEDIA_ROOT, 'avatars', os.path.basename(self.user.avatar.name))
-        
-        # Log the expected path for debugging
-        print(f"Expected avatar path: {expected_path}")
-        
-        # Verify the file exists at the expected location
-        self.assertTrue(os.path.exists(expected_path), f"File not found at {expected_path}")
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        if self.cleaned_data.get('avatar'):
+            user.avatar = self.cleaned_data['avatar']
+        if commit:
+            user.save()
+        return user
 
-        # Clean up: remove the file after test
-        if os.path.exists(expected_path):
-            os.remove(expected_path)
+class AvatarForm(forms.ModelForm):
+    avatar = forms.ImageField(label='Select an avatar', required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ['avatar']

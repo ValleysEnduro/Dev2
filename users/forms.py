@@ -1,14 +1,14 @@
+# users/forms.py
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import get_user_model
-from .models import CustomUser
+from users.models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)  # Makes email required
     avatar = forms.ImageField(required=False)  # Ensures avatar is optional
 
     class Meta(UserCreationForm.Meta):
-        model = get_user_model()
+        model = CustomUser
         fields = UserCreationForm.Meta.fields + ('email', 'avatar',)
 
     def save(self, commit=True):
@@ -26,4 +26,3 @@ class AvatarForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['avatar']
-

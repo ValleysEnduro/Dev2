@@ -46,7 +46,7 @@ User = get_user_model()
 
 class CustomUserFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = User
+        model = CustomUser
 
     username = factory.Faker('user_name')
     email = factory.Faker('email')
@@ -57,14 +57,19 @@ class CustomUserFactory(factory.django.DjangoModelFactory):
             return
         
         if extracted:
-            # Use the extracted file
-            self.avatar = extracted
-        else:
-            # Create a default avatar
-            self.avatar = SimpleUploadedFile(
-                name='test_avatar.jpg',
-                content=b'fake-image-content',
-                content_type='image/jpeg'
+            self.avatar.save(
+                extracted.name,
+                extracted,
+                save=False
             )
-        # Save the instance to ensure avatar is saved properly
+        else:
+            self.avatar.save(
+                'test_avatar.jpg',
+                SimpleUploadedFile(
+                    name='test_avatar.jpg',
+                    content=b'fake-image-content',
+                    content_type='image/jpeg'
+                ),
+                save=False
+            )
         self.save()

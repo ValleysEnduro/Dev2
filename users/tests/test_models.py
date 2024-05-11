@@ -1,3 +1,4 @@
+# users/tests/test_models.py
 from django.test import TestCase
 from django.contrib.auth.models import Group, Permission
 from users.models import CustomUser, Purchase
@@ -18,7 +19,7 @@ class CustomUserTestCase(TestCase):
         group = Group.objects.create(name='Test Group')
         permission = Permission.objects.create(
             name='Can do something',
-            content_type_id=1,  # Use appropriate content type ID for your app
+            content_type_id=1,  # Use appropriate content type ID
             codename='can_do_something'
         )
         user = CustomUserFactory()
@@ -39,13 +40,13 @@ class PurchaseTestCase(TestCase):
 class CustomUserEdgeCaseTestCase(TestCase):
     def test_custom_user_without_avatar(self):
         user = CustomUserFactory(avatar=None)
-        self.assertTrue(user.avatar is None or not user.avatar.name)
+        self.assertTrue(user.avatar is None or user.avatar.name == '', "Avatar should be None or have no name.")
 
 class CustomUserModelTest(TestCase):
     def test_avatar_field_handling(self):
         user = CustomUser.objects.create_user(
-            username='testuser2',
-            password='testpassword2'
+            username='testuser4',
+            password='testpassword4'
         )
         avatar = SimpleUploadedFile(
             name='test_avatar.jpg',
@@ -57,6 +58,9 @@ class CustomUserModelTest(TestCase):
 
         # Construct the expected file path
         expected_path = os.path.join(settings.MEDIA_ROOT, 'avatars', 'test_avatar.jpg')
+        
+        # Log the expected path for debugging
+        print(f"Expected avatar path: {expected_path}")
         
         # Verify the file exists at the expected location
         self.assertTrue(os.path.exists(expected_path), f"File not found at {expected_path}")

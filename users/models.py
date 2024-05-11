@@ -1,16 +1,13 @@
+# users/models.py
 import os
 from django.utils.text import slugify
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 def user_avatar_upload_to(instance, filename):
-    # Slugify the username to create a clean filename
     username_slug = slugify(instance.username)
-    # Extract file extension from the original filename
     extension = os.path.splitext(filename)[1]
-    # Construct the new filename using username and original extension
     new_filename = f"{username_slug}{extension}"
-    # Define the upload path under 'avatars/' directory
     return os.path.join('avatars', new_filename)
 
 class CustomUser(AbstractUser):
@@ -33,7 +30,7 @@ class CustomUser(AbstractUser):
     )
 
 class Purchase(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
     item_name = models.CharField(max_length=100)
     quantity = models.IntegerField(default=1)
     purchase_date = models.DateTimeField(auto_now_add=True)
