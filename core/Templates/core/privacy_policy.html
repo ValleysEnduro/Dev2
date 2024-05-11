@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-
 {% block content %}
 <article>
     <h2>Privacy Policy</h2>
+    <!-- Ensure the content is from a trusted source and sanitized -->
     {{ policy.content|safe }}
 </article>
 {% endblock %}
+
