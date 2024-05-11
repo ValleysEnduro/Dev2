@@ -1,21 +1,26 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
-from .views import register, login_view, logout_view, dashboard, profile_view, update_avatar, delete_avatar
+from .views import (
+    register_view, register_user, login_view, perform_login,
+    logout_view, perform_logout, dashboard, profile_view,
+    update_avatar_view, update_avatar, delete_avatar, redirect_to_profile,
+    confirm_cancel_entry, cancel_entry
+)
+
+app_name = 'users'
 
 urlpatterns = [
-    path('login/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
-    path('register/', register, name='register'),
+    path('register/', register_view, name='register_view'),
+    path('register/submit/', register_user, name='register_user'),
+    path('login/', login_view, name='login_view'),
+    path('login/submit/', perform_login, name='perform_login'),
+    path('logout/', logout_view, name='logout_view'),
+    path('logout/submit/', perform_logout, name='perform_logout'),
     path('dashboard/', dashboard, name='dashboard'),
-    path('profile/', profile_view, name='profile'),
-    path('update_avatar/', update_avatar, name='update_avatar'),
-    path('delete_avatar/', delete_avatar, name='delete_avatar'),
-    
-
-    # Password reset URLs using Django's built-in views
-    path('password_reset/', auth_views.PasswordResetView.as_view(template_name='users/password_reset.html'), name='password_reset'),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), name='password_reset_complete'),
-
+    path('profile/', profile_view, name='profile_view'),
+    path('avatar/update/', update_avatar_view, name='update_avatar_view'),
+    path('avatar/update/submit/', update_avatar, name='update_avatar'),
+    path('avatar/delete/', delete_avatar, name='delete_avatar'),
+    path('redirect_to_profile/', redirect_to_profile, name='redirect_to_profile'),
+    path('entry/confirm_cancel/<int:entry_id>/', confirm_cancel_entry, name='confirm_cancel_entry'),
+    path('entry/cancel/<int:entry_id>/', cancel_entry, name='cancel_entry'),
 ]
