@@ -1,82 +1,133 @@
-from django.db import models
-from treebeard.mp_tree import MP_Node
-from age_categories.models import AgeCategory
-from imagekit.models import ProcessedImageField
-from imagekit.processors import ResizeToFill
-from django.utils import timezone
-from django.conf import settings
-from core.models import RefundPolicy
-from core.models import TermsandConditions
-from django.utils import timezone
-from datetime import datetime
+import sys
+import logging
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods, require_POST, require_GET
+from django.http import HttpResponseRedirect, JsonResponse
+from .forms import CustomUserCreationForm
+from event_management.models import Entry
 from payments.models import Payment
 
-class Venue(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    location = models.CharField(max_length=255)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    hero_image = ProcessedImageField(upload_to='venues/',
-                                     processors=[ResizeToFill(1024, 768)],
-                                     format='WEBP',
-                                     options={'quality': 90},
-                                     blank=True,
-                                     null=True)
+logger = logging.getLogger(__name__)
 
-    def __str__(self):
-        return self.name
-
-class Event(models.Model):
-    name = models.CharField(max_length=100)
-    venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='events')
-    date = models.DateField()
-    description = models.TextField(blank=True)
-    is_completed = models.BooleanField(default=False)
-    last_modified = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
-
-class Race(models.Model):
-    name = models.CharField(max_length=100)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='races')
-    start_time = models.TimeField()
-    entry_fee = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
-    age_categories = models.ManyToManyField(AgeCategory, related_name='races', blank=True)
-    refund_policy = models.ForeignKey(RefundPolicy, on_delete=models.SET_NULL, null=True, blank=True, related_name='races')
-    entry_close_datetime = models.DateTimeField(help_text="Deadline after which no new entries are accepted.")
-    transfer_close_datetime = models.DateTimeField(help_text="Deadline after which entries cannot be transferred.")
-    is_completed = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.name
-
-class Entry(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='entries')
-    race = models.ForeignKey(Race, on_delete=models.CASCADE, related_name='entries')
-    privacy_policy_accepted = models.BooleanField(default=False, verbose_name='I agree to the Privacy Policy')
-    refund_policy_accepted = models.BooleanField(default=False, verbose_name='I agree to the Refund Policy')
-    terms_and_conditions_accepted = models.BooleanField(default=False, verbose_name='I agree to the Terms and Conditions')
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField(null=True)
-    email = models.CharField(max_length=100, blank=True)
-    age_category = models.ForeignKey(AgeCategory, on_delete=models.SET_NULL, null=True, blank=True)
-    club_team_name = models.CharField(max_length=100, blank=True)
-    is_archived = models.BooleanField(default=False)
-    entry_date = models.DateField(auto_now_add=True)
-    payment = models.OneToOneField(Payment, on_delete=models.SET_NULL, null=True, blank=True, related_name='entry')
-
-    def can_cancel(self):
-        # Converts self.race.event.date to a datetime at midnight
-        event_datetime = datetime.combine(self.race.event.date, datetime.min.time())
-        event_datetime = timezone.make_aware(event_datetime, timezone.get_default_timezone())  # Make it timezone aware
+# Helper function to fetch user-related data
+def get_user_related_data(user):
+    try:
+        user_entries = Entry.objects.filter(user=user, is_archived=False)
+        user_payments = Payment.objects.filter(user=user)
         
-        return self.race.refund_policy and timezone.now() <= event_datetime - timezone.timedelta(days=self.race.refund_policy.cutoff_days)
+        logger.info(f"Fetched data for user: {user.username}")
+        return {
+            'user_entries': user_entries,
+            'user_payments': user_payments,
+        }
+    except Exception as e:
+        logger.error(f"Error fetching data for user {user.username}: {str(e)}", exc_info=sys.exc_info())
+        return {}
 
-    def refund_amount(self):
-        if self.can_cancel():
-            # Assuming entry_fee is a field in the Race model, not Entry
-            return self.race.entry_fee * (self.race.refund_policy.refund_percentage / 100)
-        return 0
+# Decorator for common logging and redirections
+def log_and_redirect(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        try:
+            return view_func(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error in {view_func.__name__}: {str(e)}", exc_info=sys.exc_info())
+            messages.error(request, "An unexpected error occurred.")
+            return redirect('users:dashboard')
+    return _wrapped_view
+
+# View for dashboard
+@login_required
+@log_and_redirect
+@require_http_methods(["GET"])
+def dashboard(request):
+    context = get_user_related_data(request.user)
+    return render(request, 'users/dashboard.html', context)
+
+# Separate GET and POST for cancel_entry
+@login_required
+@log_and_redirect
+@require_GET
+def confirm_cancel_entry(request, entry_id):
+    entry = get_object_or_404(Entry, id=entry_id, user=request.user)
+    return render(request, 'users/confirm_cancel.html', {'entry': entry})
+
+@login_required
+@log_and_redirect
+@require_POST
+def cancel_entry(request, entry_id):
+    entry = get_object_or_404(Entry, id=entry_id, user=request.user)
+    if not entry.can_cancel():
+        messages.error(request, "Cancellation period has passed.")
+    else:
+        refund = entry.refund_amount()
+        entry.delete()
+        messages.success(request, f"Entry canceled. Refund: {refund}")
+    return JsonResponse({'success': True, 'redirect_url': reverse('users:dashboard')})
+
+# Separate GET and POST for login_view
+@log_and_redirect
+@require_GET
+def login_view(request):
+    return render(request, 'users/user_login.html')
+
+@log_and_redirect
+@require_POST
+def perform_login(request):
+    user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
+    if user:
+        login(request, user)
+        return JsonResponse({'success': True, 'redirect_url': reverse('users:dashboard')})
+    messages.error(request, 'Invalid username or password')
+    return JsonResponse({'success': False, 'error': 'Invalid username or password'})
+
+# View for user profile
+@login_required
+@log_and_redirect
+@require_GET
+def profile_view(request):
+    form = CustomUserCreationForm(instance=request.user)
+    return render(request, 'profile.html', {'form': form})
+
+# Separate GET and POST for logout_view
+@login_required
+@log_and_redirect
+@require_GET
+def logout_view(request):
+    return render(request, 'users/confirm_logout.html')
+
+@login_required
+@log_and_redirect
+@require_POST
+def perform_logout(request):
+    logout(request)
+    messages.success(request, "Successfully logged out.")
+    return JsonResponse({'success': True, 'redirect_url': reverse('users:login')})
+
+# Separate GET and POST for register
+@log_and_redirect
+@require_GET
+def register_view(request):
+    form = CustomUserCreationForm()
+    return render(request, 'users/register.html', {'form': form})
+
+@log_and_redirect
+@require_POST
+def register_user(request):
+    form = CustomUserCreationForm(request.POST)
+    if form.is_valid():
+        user = form.save()
+        messages.success(request, f'Account created for {user.username}!')
+        return JsonResponse({'success': True, 'redirect_url': reverse('users:login')})
+    messages.error(request, 'Please correct the below errors.')
+    return JsonResponse({'success': False, 'error': form.errors.as_json()})
+
+# View to redirect to profile
+@login_required
+@log_and_redirect
+@require_GET
+def redirect_to_profile(request):
+    return HttpResponseRedirect(reverse('users:profile'))

@@ -1,108 +1,63 @@
+<!-- users/dashboard.html -->
 {% extends "base.html" %}
 
 {% block content %}
+  <h1>Welcome, {{ request.user.email }}!</h1>
 
-<div class="mt-4">
-    <h2>Welcome, {{ user.username }}!</h2>
+  <h2>Your Entries</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Race</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Entry Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in user_entries %}
+        <tr>
+          <td>{{ entry.race.name }}</td>
+          <td>{{ entry.first_name }}</td>
+          <td>{{ entry.last_name }}</td>
+          <td>{{ entry.entry_date }}</td>
+          <td>
+            <form action="{% url 'users:cancel_entry' entry.id %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" onclick="return confirm('Are you sure you want to cancel this entry?');">Cancel</button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5">No entries found.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
- <!-- Display Race Entries -->
- <h2>Your Race Entries</h2>
- {% if user_race_entries %}
-     <table>
-         <thead>
-             <tr>
-                 <th>Race</th>
-                 <th>First Name</th>
-                 <th>Last Name</th>
-                 <th>Age Category</th>
-                 <th>Club/Team</th>
-                 <th>Edit</th>
-                 <th>Transfer</th>
-             </tr>
-         </thead>
-         <tbody>
-             {% for entry in user_race_entries %}
-                 <tr>
-                     <td>{{ entry.race.name }}</td>
-                     <td>{{ entry.first_name }}</td>
-                     <td>{{ entry.last_name }}</td>
-                     <td>{{ entry.age_category }}</td>
-                     <td>{{ entry.club_team_name }}</td>
-                     <td>
-                         <!-- Inline Entry Edit Form -->
-                         <form method="post">
-                             {% csrf_token %}
-                             {{ entry_form.as_p }}
-                             <input type="hidden" name="entry_id" value="{{ entry.id }}">
-                             <button type="submit" name="entry_form">Update Entry</button>
-                         </form>
-                     </td>
-                     <td>
-                         <!-- Inline Entry Transfer Form -->
-                         <form method="post">
-                             {% csrf_token %}
-                             {{ transfer_form.as_p }}
-                             <input type="hidden" name="entry_id" value="{{ entry.id }}">
-                             <button type="submit" name="transfer_form">Transfer Entry</button>
-                         </form>
-                     </td>
-                 </tr>
-             {% endfor %}
-         </tbody>
-     </table>
- {% else %}
-     <p>You have no race entries.</p>
- {% endif %}
-</div>
-
-    <!-- Display Payments -->
-    <div class="mt-4">
-        <h3>Your Payments</h3>
-        {% if user_payments %}
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for payment in user_payments %}
-                    <tr>
-                        <td>${{ payment.amount|floatformat:2 }}</td>
-                        <td>{{ payment.status }}</td>
-                        <td>{{ payment.timestamp|date:"F d, Y H:i" }}</td>
-                        <td>{{ payment.content_object }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No payments found.</p>
-        {% endif %}
-    </div>
-</div>
-
-<script>
-function submitAvatarForm() {
-    const form = document.getElementById('avatarForm');
-    const formData = new FormData(form);
-    fetch('{{ request.path }}', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Accept': 'text/html',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.text())
-    .then(html => {
-        document.getElementById('avatar-section').innerHTML = html;
-    })
-    .catch(error => console.error('Error updating avatar:', error));
-}
-</script>
+  <h2>Your Payments</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Entry</th>
+        <th>Amount</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for payment in user_payments %}
+        <tr>
+          <td>{{ payment.entry.race.name }}</td>
+          <td>{{ payment.amount }}</td>
+          <td>{{ payment.date }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3">No payments found.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

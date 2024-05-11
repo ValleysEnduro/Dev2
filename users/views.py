@@ -8,19 +8,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from django.http import HttpResponseRedirect, JsonResponse
-from .forms import CustomUserCreationForm  # Removed AvatarForm import
-from event_management.models import Entry
-from payments.models import Payment, RaceEntry
+from django.apps import apps  # Added this import
+from .forms import CustomUserCreationForm
+from .utils import get_user_related_data  # Import the updated utils function
 
 logger = logging.getLogger(__name__)
-
-# Helper function to fetch common user-related data
-def get_user_related_data(user):
-    return {
-        'user_entries': Entry.objects.filter(user=user).prefetch_related('events'),
-        'user_race_entries': RaceEntry.objects.filter(participant=user).select_related('race'),
-        'user_payments': Payment.objects.filter(user=user).select_related('entry'),
-    }
 
 # Decorator for common logging and redirections
 def log_and_redirect(view_func):
@@ -46,6 +38,7 @@ def dashboard(request):
 @log_and_redirect
 @require_GET
 def confirm_cancel_entry(request, entry_id):
+    Entry = apps.get_model('event_management', 'Entry')
     entry = get_object_or_404(Entry, id=entry_id, user=request.user)
     return render(request, 'users/confirm_cancel.html', {'entry': entry})
 
@@ -53,6 +46,7 @@ def confirm_cancel_entry(request, entry_id):
 @log_and_redirect
 @require_POST
 def cancel_entry(request, entry_id):
+    Entry = apps.get_model('event_management', 'Entry')
     entry = get_object_or_404(Entry, id=entry_id, user=request.user)
     if not entry.can_cancel():
         messages.error(request, "Cancellation period has passed.")
