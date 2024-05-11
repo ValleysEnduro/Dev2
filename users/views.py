@@ -52,7 +52,7 @@ def cancel_entry(request, entry_id):
         refund = entry.refund_amount()
         entry.delete()
         messages.success(request, f"Entry canceled. Refund: {refund}")
-    return redirect('users:dashboard')
+    return JsonResponse({'success': True, 'redirect_url': reverse('users:dashboard')})
 
 # View for user login
 @require_http_methods(["GET", "POST"])
@@ -75,12 +75,13 @@ def profile_view(request):
     return render(request, 'users/profile.html')
 
 # View to log out user
-@require_GET
+@login_required
 @log_and_redirect
+@require_POST
 def logout_view(request):
     logout(request)
     messages.success(request, "Successfully logged out.")
-    return redirect('users:login')
+    return JsonResponse({'success': True, 'redirect_url': reverse('users:login')})
 
 # View for user registration
 @require_http_methods(["GET", "POST"])
