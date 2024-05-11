@@ -9,7 +9,7 @@ from django.views.decorators.http import require_http_methods, require_POST, req
 from .forms import CustomUserCreationForm, AvatarForm
 from event_management.models import Entry, Race
 from payments.models import Payment, RaceEntry
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 
 logger = logging.getLogger(__name__)
 
@@ -58,8 +58,9 @@ def login_view(request):
         user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
         if user:
             login(request, user)
-            return redirect('users:dashboard')
+            return JsonResponse({'success': True, 'redirect_url': reverse('users:dashboard')})
         messages.error(request, 'Invalid username or password')
+        return JsonResponse({'success': False, 'error': 'Invalid username or password'})
     return render(request, 'users/user_login.html')
 
 @login_required
@@ -80,8 +81,9 @@ def register(request):
         if form.is_valid():
             user = form.save()
             messages.success(request, f'Account created for {user.username}!')
-            return redirect('users:login')
+            return JsonResponse({'success': True, 'redirect_url': reverse('users:login')})
         messages.error(request, 'Please correct the below errors.')
+        return JsonResponse({'success': False, 'error': form.errors.as_json()})
     else:
         form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form})
@@ -99,7 +101,8 @@ def update_avatar(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Your avatar has been updated successfully!')
-            return redirect('users:profile')
+            return JsonResponse({'success': True, 'redirect_url': reverse('users:profile')})
+        return JsonResponse({'success': False, 'error': form.errors.as_json()})
     else:
         form = AvatarForm(instance=request.user)
     return render(request, 'users/update_avatar.html', {'form': form})
@@ -114,4 +117,4 @@ def delete_avatar(request):
         messages.success(request, "Avatar deleted successfully!")
     else:
         messages.error(request, "No avatar to delete.")
-    return redirect('users:dashboard')
+    return JsonResponse({'success': True, 'redirect_url': reverse('users:dashboard')})
