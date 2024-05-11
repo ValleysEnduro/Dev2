@@ -10,6 +10,7 @@ from core.models import TermsandConditions
 from django.utils import timezone
 from datetime import datetime
 from payments.models import Payment
+from datetime import datetime, timedelta
 
 class Venue(models.Model):
     name = models.CharField(max_length=100)
@@ -69,14 +70,14 @@ class Entry(models.Model):
     payment = models.OneToOneField(Payment, on_delete=models.SET_NULL, null=True, blank=True, related_name='entry')
 
     def can_cancel(self):
-        # Converts self.race.event.date to a datetime at midnight
+        if not self.race.refund_policy:
+            return False  # No refund policy set
         event_datetime = datetime.combine(self.race.event.date, datetime.min.time())
         event_datetime = timezone.make_aware(event_datetime, timezone.get_default_timezone())  # Make it timezone aware
-        
-        return self.race.refund_policy and timezone.now() <= event_datetime - timezone.timedelta(days=self.race.refund_policy.cutoff_days)
+        cancellation_deadline = event_datetime - timedelta(days=self.race.refund_policy.cutoff_days)
+        return timezone.now() <= cancellation_deadline
 
     def refund_amount(self):
         if self.can_cancel():
-            # Assuming entry_fee is a field in the Race model, not Entry
             return self.race.entry_fee * (self.race.refund_policy.refund_percentage / 100)
         return 0

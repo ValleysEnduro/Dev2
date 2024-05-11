@@ -7,9 +7,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.apps import apps
-from django.middleware.csrf import get_token
 from .forms import CustomUserCreationForm
 from .utils import get_user_related_data
 
@@ -26,12 +25,16 @@ def log_and_redirect(view_func):
             return redirect('users:dashboard')
     return _wrapped_view
 
+# Helper function to get dashboard context
+def get_dashboard_context(user):
+    return get_user_related_data(user)
+
 # View for dashboard
 @login_required
 @log_and_redirect
-@require_http_methods(["GET", "POST"])
+@require_GET
 def dashboard(request):
-    context = get_user_related_data(request.user)
+    context = get_dashboard_context(request.user)
     return render(request, 'users/dashboard.html', context)
 
 # Separate GET and POST for cancel_entry
@@ -44,18 +47,17 @@ def confirm_cancel_entry(request, entry_id):
     return render(request, 'users/confirm_cancel.html', {'entry': entry})
 
 @login_required
+@log_and_redirect
 @require_POST
 def cancel_entry(request, entry_id):
     Entry = apps.get_model('event_management', 'Entry')
     entry = get_object_or_404(Entry, id=entry_id, user=request.user)
     if not entry.can_cancel():
-        messages.error(request, "Cancellation period has passed.")
         return JsonResponse({'success': False, 'error': 'Cancellation period has passed.'})
     else:
         refund = entry.refund_amount()
         entry.delete()
-        messages.success(request, f"Entry canceled. Refund: {refund}")
-        return JsonResponse({'success': True})
+        return JsonResponse({'success': True, 'redirect_url': reverse('users:dashboard'), 'message': f'Entry canceled. Refund: {refund}'})
 
 # Separate GET and POST for login_view
 @log_and_redirect
@@ -70,7 +72,6 @@ def perform_login(request):
     if user:
         login(request, user)
         return JsonResponse({'success': True, 'redirect_url': reverse('users:dashboard')})
-    messages.error(request, 'Invalid username or password')
     return JsonResponse({'success': False, 'error': 'Invalid username or password'})
 
 # View for user profile
@@ -93,7 +94,6 @@ def logout_view(request):
 @require_POST
 def perform_logout(request):
     logout(request)
-    messages.success(request, "Successfully logged out.")
     return JsonResponse({'success': True, 'redirect_url': reverse('users:login')})
 
 # Separate GET and POST for register
@@ -109,9 +109,7 @@ def register_user(request):
     form = CustomUserCreationForm(request.POST)
     if form.is_valid():
         user = form.save()
-        messages.success(request, f'Account created for {user.username}!')
-        return JsonResponse({'success': True, 'redirect_url': reverse('users:login')})
-    messages.error(request, 'Please correct the below errors.')
+        return JsonResponse({'success': True, 'redirect_url': reverse('users:login'), 'message': f'Account created for {user.username}!'})
     return JsonResponse({'success': False, 'error': form.errors.as_json()})
 
 # View to redirect to profile
