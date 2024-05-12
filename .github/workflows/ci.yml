@@ -38,7 +38,7 @@ jobs:
           PIP_DEFAULT_TIMEOUT: "100"
 
       - name: Set environment variable for Django settings
-        run: echo "DJANGO_SETTINGS_MODULE=myproject.settings" >> $GITHUB_ENV
+        run: echo "DJANGO_SETTINGS_MODULE=wbe.settings" >> $GITHUB_ENV  # Replace `yourproject` with your actual project name
 
       - name: Lint code with flake8
         run: |
