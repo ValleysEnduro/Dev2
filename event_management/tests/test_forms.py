@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.test import TestCase
-from .factories import RaceFactory
 from django.utils import timezone
+from .factories import RaceFactory
 import pytz
 
 class EntryFormTimezoneTest(TestCase):
@@ -25,11 +25,8 @@ class EntryFormTimezoneTest(TestCase):
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
         self.assertEqual(response.status_code, 302)  # Check for redirect
-        self.assertRedirects(response, reverse('homepage'))  # Ensure correct redirect
+        self.assertRedirects(response, reverse('core:homepage'))  # Ensure correct redirect
 
-from django.test import TestCase
-from django.urls import reverse
-from .factories import RaceFactory
 
 class EntryFormFailureTest(TestCase):
     def setUp(self):
@@ -49,11 +46,8 @@ class EntryFormFailureTest(TestCase):
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
         self.assertEqual(response.status_code, 200)  # Form should re-render with errors
-        self.assertContains(response, "This field is required.")
+        self.assertContains(response, "This field is required.")  # Check for specific error message
 
-from django.urls import reverse
-from django.test import TestCase
-from .factories import RaceFactory
 
 class EntryFormViewTest(TestCase):
     def setUp(self):
@@ -66,6 +60,7 @@ class EntryFormViewTest(TestCase):
         form_data = {
             'privacy_policy_accepted': True,
             'refund_policy_accepted': True,
+            'terms_and_conditions_accepted': True,
             'first_name': 'Test',
             'last_name': 'User',
             'date_of_birth': '2000-01-01',
@@ -74,5 +69,5 @@ class EntryFormViewTest(TestCase):
         }
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race_within_window.pk]), form_data)
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('core:homepage'))  # Updated to 'core:homepage'
+        self.assertEqual(response.status_code, 302)  # Check for redirect
+        self.assertRedirects(response, reverse('core:homepage'))  # Ensure correct redirect

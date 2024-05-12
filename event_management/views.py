@@ -43,7 +43,7 @@ def submit_entry_form(request, race_id):
         else:
             entry.user = None
         entry.save()
-        return redirect('core:homepage')  # Updated redirect to 'core:homepage'
+        return redirect('core:homepage')  # Ensure this matches your URL name
     else:
         print(f"Form errors: {form.errors}")
         context = {
