@@ -2,7 +2,6 @@ from django.urls import reverse
 from django.test import TestCase
 from .factories import RaceFactory
 from django.utils import timezone
-
 import pytz
 
 class EntryFormTimezoneTest(TestCase):
@@ -11,7 +10,6 @@ class EntryFormTimezoneTest(TestCase):
 
     def test_form_submission_different_timezone(self):
         form_data = {
-            'race': self.race.id,
             'privacy_policy_accepted': True,
             'refund_policy_accepted': True,
             'terms_and_conditions_accepted': True,
@@ -26,7 +24,12 @@ class EntryFormTimezoneTest(TestCase):
         timezone.activate(user_timezone)
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
-        self.assertEqual(response.status_code, 302)  # Assuming a redirect on success
+        self.assertEqual(response.status_code, 302)  # Check for redirect
+        self.assertRedirects(response, reverse('homepage'))  # Ensure correct redirect
+
+from django.test import TestCase
+from django.urls import reverse
+from .factories import RaceFactory
 
 class EntryFormFailureTest(TestCase):
     def setUp(self):
@@ -34,11 +37,16 @@ class EntryFormFailureTest(TestCase):
 
     def test_form_submission_missing_fields(self):
         form_data = {
-            # Intentionally omit required fields
+            'privacy_policy_accepted': True,
+            # 'refund_policy_accepted': True,  # Intentionally left out for the test
+            'terms_and_conditions_accepted': True,
             'first_name': 'John',
             'last_name': 'Doe',
+            'date_of_birth': '1980-01-01',
+            'email': 'john@example.com',
+            'club_team_name': 'Runners Club'
         }
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
-        self.assertEqual(response.status_code, 200)  # Expecting no redirect on failure
-        self.assertContains(response, 'homepage')
+        self.assertEqual(response.status_code, 200)  # Form should re-render with errors
+        self.assertContains(response, "This field is required.")
