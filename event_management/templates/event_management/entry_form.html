@@ -1,26 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}Entry Form for {{ race.name }}{% endblock %}
+<h1>Enter Race: {{ race.name }}</h1>
 
-{% block content %}
-<div class="entry-form">
-    <h1>Entry Form for {{ race.name }}</h1>
-    <p>{{ race.description }}</p>
-    <p>Entry closes on: {{ race.entry_close_datetime }}</p>
-    <p>Transfer closes on: {{ race.transfer_close_datetime }}</p>
+<form method="post" action="{% url 'event_management:submit_entry_form' race.id %}">
+  {% csrf_token %}
+  {{ form.as_p }}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div>
-            <label for="privacy_policy_accepted">Accept Privacy Policy:</label>
-            {{ form.privacy_policy_accepted }}
-        </div>
-        <div>
-            <label for="refund_policy_accepted">Accept Refund Policy:</label>
-            {{ form.refund_policy_accepted }}
-        </div>
-        <button type="submit">Submit</button>
-    </form>
-</div>
+  <!-- Mock Payment Button -->
+  <button type="submit">Submit and Pay</button>
+</form>
+
+<!-- Display messages -->
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}Submit</button>
+</form>
+
 {% endblock content %}

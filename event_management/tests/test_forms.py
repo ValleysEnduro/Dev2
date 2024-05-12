@@ -53,16 +53,19 @@ class EntryFormFailureTest(TestCase):
 
         # Ensure redirection happens
         self.assertEqual(response.status_code, 302)
-        
+
         # Follow the redirection
         follow_response = self.client.get(response.url)
-        
+
         # Check the final status code
         self.assertEqual(follow_response.status_code, 200)
 
+        # Debugging: Print response content and errors
+        print(f"Redirection URL: {response.url}")
+        print(f"Response Content: {follow_response.content.decode('utf-8')}")
+        
         # Check if context is available and contains form errors
         if follow_response.context is not None:
-            print(follow_response.context)
             if 'form' in follow_response.context:
                 form_errors = follow_response.context['form'].errors.get('refund_policy_accepted', [])
                 self.assertIn("This field is required.", form_errors)
