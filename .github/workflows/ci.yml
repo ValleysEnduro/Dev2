@@ -39,24 +39,24 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "DJANGO_SETTINGS_MODULE=wbe.settings" >> $GITHUB_ENV
+          echo "DJANGO_SETTINGS_MODULE=Dev2.wbe.settings" >> $GITHUB_ENV
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
           echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> $GITHUB_ENV
 
       - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=${{ github.workspace }}/Dev2" >> $GITHUB_ENV
-        
+        run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+
       - name: Run tests with pytest
         run: |
           pytest --cov=. --log-cli-level=DEBUG
         continue-on-error: false
-        
+
       - name: Report coverage
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
           path: coverage.xml
-        
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
