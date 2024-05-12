@@ -1,14 +1,19 @@
-# test_forms.py
-
 from django.test import TestCase
 from event_management.forms import EntryForm
 from event_management.models import Race, AgeCategory
-from datetime import date
+from datetime import date, timedelta
+from django.utils import timezone
 
 class EntryFormTestCase(TestCase):
     
     def setUp(self):
-        self.race = Race.objects.create(name='Sample Race', entry_fee=50.0)
+        self.race = Race.objects.create(
+            name='Sample Race', 
+            entry_fee=50.0, 
+            start_time=timezone.now(),  # Added start_time to meet NOT NULL constraint
+            entry_close_datetime=timezone.now() + timedelta(days=10),  # Ensure it's open
+            transfer_close_datetime=timezone.now() + timedelta(days=15)
+        )
         self.age_category = AgeCategory.objects.create(name='Adult')
     
     def test_form_valid_data(self):
@@ -35,6 +40,8 @@ class EntryFormTestCase(TestCase):
             'first_name': 'John',
             'last_name': 'Doe',
             'date_of_birth': '1990-01-01',
+            'email': 'john.doe@example.com',
+            'age_category': self.age_category.id,
         }
         form = EntryForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -49,6 +56,8 @@ class EntryFormTestCase(TestCase):
             'first_name': 'John',
             'last_name': 'Doe',
             'date_of_birth': '1990-01-01',
+            'email': 'john.doe@example.com',
+            'age_category': self.age_category.id,
         }
         form = EntryForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -62,6 +71,8 @@ class EntryFormTestCase(TestCase):
             'first_name': 'John',
             'last_name': 'Doe',
             'date_of_birth': '01-01-1990',  # Incorrect format
+            'email': 'john.doe@example.com',
+            'age_category': self.age_category.id,
         }
         form = EntryForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -76,6 +87,8 @@ class EntryFormTestCase(TestCase):
             'first_name': 'John',
             'last_name': 'Doe',
             'date_of_birth': '1990-01-01',
+            'email': 'john.doe@example.com',
+            'age_category': self.age_category.id,
         }
         form = EntryForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -91,6 +104,7 @@ class EntryFormTestCase(TestCase):
             'last_name': 'Doe',
             'date_of_birth': '1990-01-01',
             'email': 'invalid-email',  # Invalid email format
+            'age_category': self.age_category.id,
         }
         form = EntryForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -106,6 +120,8 @@ class EntryFormTestCase(TestCase):
             'first_name': 'John',
             'last_name': 'Doe',
             'date_of_birth': future_date,  # Future date
+            'email': 'john.doe@example.com',
+            'age_category': self.age_category.id,
         }
         form = EntryForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -120,6 +136,7 @@ class EntryFormTestCase(TestCase):
             'first_name': 'John',
             'last_name': 'Doe',
             'date_of_birth': '1990-01-01',
+            'email': 'john.doe@example.com',
             'age_category': 9999,  # Non-existing age category
         }
         form = EntryForm(data=form_data)
