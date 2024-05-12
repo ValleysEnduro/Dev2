@@ -10,7 +10,7 @@ def homepage_view(request):
     # Fetch the homepage content safely
     homepage_content = HomePage.objects.first()
     if not homepage_content:
-        raise Http404("No HomePage content is available")
+        raise Http404("No homePage content is available")
     
     # Fetch the latest 5 blog posts
     posts = Post.objects.all().order_by('-created_on')[:5]
