@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.test import TestCase
-from django.utils import timezone
 from .factories import RaceFactory
+from django.utils import timezone
 import pytz
 
 class EntryFormTimezoneTest(TestCase):
@@ -10,6 +10,7 @@ class EntryFormTimezoneTest(TestCase):
 
     def test_form_submission_different_timezone(self):
         form_data = {
+            'race': self.race.id,  # Ensure race field is included
             'privacy_policy_accepted': True,
             'refund_policy_accepted': True,
             'terms_and_conditions_accepted': True,
@@ -27,12 +28,14 @@ class EntryFormTimezoneTest(TestCase):
         self.assertEqual(response.status_code, 302, msg=f"Form errors: {response.context['form'].errors}")  # Check for redirect
         self.assertRedirects(response, reverse('core:homepage'))  # Ensure correct redirect
 
+
 class EntryFormFailureTest(TestCase):
     def setUp(self):
         self.race = RaceFactory()
 
     def test_form_submission_missing_fields(self):
         form_data = {
+            'race': self.race.id,  # Ensure race field is included
             'privacy_policy_accepted': True,
             # 'refund_policy_accepted': True,  # Intentionally left out for the test
             'terms_and_conditions_accepted': True,
@@ -56,6 +59,7 @@ class EntryFormViewTest(TestCase):
 
     def test_entry_form_post_request(self):
         form_data = {
+            'race': self.race_within_window.id,  # Ensure race field is included
             'privacy_policy_accepted': True,
             'refund_policy_accepted': True,
             'terms_and_conditions_accepted': True,
