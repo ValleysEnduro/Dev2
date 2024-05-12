@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
+{% block content %}
 <h1>Enter Race: {{ race.name }}</h1>
 
 <form method="post" action="{% url 'event_management:submit_entry_form' race.id %}">
   {% csrf_token %}
   {{ form.as_p }}
-
+  
   <!-- Mock Payment Button -->
   <button type="submit">Submit and Pay</button>
 </form>
@@ -17,7 +18,5 @@
       <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
     {% endfor %}
   </ul>
-{% endif %}Submit</button>
-</form>
-
-{% endblock content %}
+{% endif %}
+{% endblock %}
