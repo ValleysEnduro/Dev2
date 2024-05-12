@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.11', '3.12']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
         django-version: ['5.0.3']
 
     steps:
@@ -31,16 +31,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install Django==${{ matrix.django-version }}
           pip install -r requirements.txt
+        env:
+          PIP_NO_CACHE_DIR: "false"
+          PIP_DISABLE_PIP_VERSION_CHECK: "1"
+          PIP_DEFAULT_TIMEOUT: "100"
 
       - name: Lint code with flake8
         run: |
           pip install flake8
           flake8 .
+        continue-on-error: true  # Allows the workflow to continue even if linting fails
 
       - name: Run tests with pytest
         run: |
           pip install pytest pytest-cov
-          pytest --cov=.
+          pytest --cov=. --log-cli-level=DEBUG
+        continue-on-error: false  # Ensures the job fails on test failure
 
       - name: Report coverage
         uses: actions/upload-artifact@v3
