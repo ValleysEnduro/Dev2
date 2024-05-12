@@ -1,66 +1,60 @@
-<!-- templates/event_management/entry_form.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Enter Race: {{ race.name }}</title>
+    <title>Entry Form</title>
 </head>
 <body>
     <h1>Enter Race: {{ race.name }}</h1>
     <p>{{ race.description }}</p>
     <p>Entry closes on: {{ race.entry_close_datetime }}</p>
     <p>Transfer closes on: {{ race.transfer_close_datetime }}</p>
-
+    
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
 
         <div>
-            <label for="privacy_policy_accepted">Accept Privacy Policy:</label>
+            <label for="id_privacy_policy_accepted">Accept Privacy Policy:</label>
             {{ form.privacy_policy_accepted }}
         </div>
         
         <div>
-            <label for="refund_policy_accepted">Accept Refund Policy:</label>
+            <label for="id_refund_policy_accepted">Accept Refund Policy:</label>
             {{ form.refund_policy_accepted }}
         </div>
         
         <div>
-            <label for="terms_and_conditions_accepted">Accept Terms and Conditions:</label>
+            <label for="id_terms_and_conditions_accepted">Accept Terms and Conditions:</label>
             {{ form.terms_and_conditions_accepted }}
         </div>
-
+        
         <div>
-            <label for="first_name">First Name:</label>
+            <label for="id_first_name">First Name:</label>
             {{ form.first_name }}
         </div>
         
         <div>
-            <label for="last_name">Last Name:</label>
+            <label for="id_last_name">Last Name:</label>
             {{ form.last_name }}
         </div>
         
         <div>
-            <label for="date_of_birth">Date of Birth:</label>
+            <label for="id_date_of_birth">Date of Birth:</label>
             {{ form.date_of_birth }}
         </div>
         
         <div>
-            <label for="email">Email:</label>
+            <label for="id_email">Email:</label>
             {{ form.email }}
         </div>
         
         <div>
-            <label for="age_category">Age Category:</label>
-            {{ form.age_category }}
-        </div>
-        
-        <div>
-            <label for="club_team_name">Club/Team Name:</label>
+            <label for="id_club_team_name">Club/Team Name:</label>
             {{ form.club_team_name }}
         </div>
-
-        <button type="submit">Submit Entry</button>
+        
+        <button type="submit">Submit</button>
     </form>
 </body>
 </html>

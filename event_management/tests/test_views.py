@@ -40,7 +40,7 @@ class EntryFormViewTest(TestCase):
             'club_team_name': 'Test Club'
         }
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race_within_window.pk]), form_data)
-        self.assertEqual(response.status_code, 302)  # Assuming a redirect on success
+        self.assertEqual(response.status_code, 302)
 
     def test_transfer_closed_get_request(self):
         response = self.client.get(reverse('event_management:entry_form', args=[self.race_outside_transfer_window.pk]))
