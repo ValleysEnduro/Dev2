@@ -19,10 +19,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Updated to support Node.js 20
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5  # Updated to support Node.js 20
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -44,7 +44,8 @@ jobs:
           echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> $GITHUB_ENV
 
       - name: Add project to PYTHONPATH
-        run: echo "${{ github.workspace }}/wbe" >> $GITHUB_ENV
+        run: |
+          echo "PYTHONPATH=${{ github.workspace }}/wbe" >> $GITHUB_ENV
 
       - name: Lint code with flake8
         run: |
@@ -53,6 +54,8 @@ jobs:
         continue-on-error: true
 
       - name: Run tests with pytest
+        env:
+          PYTHONPATH: ${{ github.workspace }}/wbe
         run: |
           pytest --cov=. --log-cli-level=DEBUG
         continue-on-error: false
