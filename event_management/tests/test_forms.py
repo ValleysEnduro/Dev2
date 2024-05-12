@@ -1,14 +1,16 @@
 from django.test import TestCase
 from event_management.forms import EntryForm
-from event_management.models import Race, AgeCategory, Event
+from event_management.models import Race, AgeCategory, Event, Venue
 from datetime import date
 
 class EntryFormTestCase(TestCase):
-    
+
     def setUp(self):
+        self.venue = Venue.objects.create(name='Sample Venue', address='1234 Sample St')
         self.event = Event.objects.create(
             name='Sample Event',
-            date=date.today() + timedelta(days=30)  # Ensure a future date
+            date=date.today() + timedelta(days=30),  # Ensure a future date
+            venue=self.venue  # Set venue
         )
         self.race = Race.objects.create(
             name='Sample Race', 
@@ -20,7 +22,7 @@ class EntryFormTestCase(TestCase):
             min_age=18,  # Provide required min_age
             max_age=99   # Provide required max_age
         )
-    
+
     def test_form_valid_data(self):
         form_data = {
             'race': self.race.id,
@@ -36,7 +38,7 @@ class EntryFormTestCase(TestCase):
         }
         form = EntryForm(data=form_data)
         self.assertTrue(form.is_valid())
-    
+
     def test_form_missing_required_fields(self):
         form_data = {
             'race': self.race.id,
@@ -62,7 +64,7 @@ class EntryFormTestCase(TestCase):
         }
         form = EntryForm(data=form_data)
         self.assertTrue(form.is_valid())
-    
+
     def test_form_invalid_date_format(self):
         form_data = {
             'race': self.race.id,
@@ -105,7 +107,7 @@ class EntryFormTestCase(TestCase):
         form = EntryForm(data=form_data)
         self.assertFalse(form.is_valid())
         self.assertIn('email', form.errors)
-    
+
     def test_form_future_date_of_birth(self):
         future_date = date.today().replace(year=date.today().year + 1).isoformat()
         form_data = {
