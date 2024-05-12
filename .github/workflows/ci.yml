@@ -45,13 +45,14 @@ jobs:
           echo "DJANGO_SETTINGS_MODULE=wbe.settings" >> $GITHUB_ENV
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
           echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> $GITHUB_ENV
-          echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> $GITHUB_ENV  # New line added
+          echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> $GITHUB_ENV
 
       - name: Run tests with pytest
         env:
           PYTHONPATH: ${{ github.workspace }}
+          DJANGO_SETTINGS_MODULE: wbe.settings  # Ensure DJANGO_SETTINGS_MODULE is available here as well
         run: |
-          pytest --cov=. --log-cli-level=DEBUG
+          pytest --ds=wbe.settings --cov=. --log-cli-level=DEBUG --tb=short -s
         continue-on-error: false
 
       - name: Report coverage
