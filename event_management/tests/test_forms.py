@@ -77,7 +77,7 @@ class EntryFormFailureTest(TestCase):
             self.assertIsNotNone(form, "Form is not in context")
             self.assertFalse(form.is_valid(), "Form should be invalid")
             self.assertTrue(form.errors, "Form should have errors")
-            
+
             expected_errors = {
                 'first_name': ['This field is required.'],
                 'last_name': ['This field is required.'],
@@ -90,6 +90,7 @@ class EntryFormFailureTest(TestCase):
             for field, error in expected_errors.items():
                 self.assertIn(field, form.errors)
                 self.assertEqual(form.errors[field], error)
+
 
 class EntryFormViewTest(TestCase):
     def setUp(self):
