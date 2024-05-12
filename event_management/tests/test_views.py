@@ -1,19 +1,24 @@
 from django.test import TestCase
 from django.urls import reverse
-from event_management.tests.factories import RaceFactory, UserFactory
+from event_management.tests.factories import RaceFactory
 from event_management.models import Entry
 from django.utils import timezone
 from datetime import timedelta
 
-from django.urls import reverse
-from django.test import TestCase
-from event_management.tests.factories import RaceFactory
-
 class EntryFormViewTest(TestCase):
     def setUp(self):
-        self.race_within_window = RaceFactory()
-        self.race_outside_entry_window = RaceFactory()
-        self.race_outside_transfer_window = RaceFactory()
+        self.race_within_window = RaceFactory(
+            entry_close_datetime=timezone.now() + timedelta(days=1),
+            transfer_close_datetime=timezone.now() + timedelta(days=1)
+        )
+        self.race_outside_entry_window = RaceFactory(
+            entry_close_datetime=timezone.now() - timedelta(days=1),
+            transfer_close_datetime=timezone.now() + timedelta(days=1)
+        )
+        self.race_outside_transfer_window = RaceFactory(
+            entry_close_datetime=timezone.now() + timedelta(days=1),
+            transfer_close_datetime=timezone.now() - timedelta(days=1)
+        )
 
     def test_entry_form_get_request(self):
         response = self.client.get(reverse('event_management:entry_form', args=[self.race_within_window.pk]))
@@ -25,7 +30,6 @@ class EntryFormViewTest(TestCase):
 
     def test_entry_form_post_request(self):
         form_data = {
-            'race': self.race_within_window.id,
             'privacy_policy_accepted': True,
             'refund_policy_accepted': True,
             'terms_and_conditions_accepted': True,
