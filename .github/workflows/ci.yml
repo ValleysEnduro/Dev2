@@ -31,6 +31,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install Django==${{ matrix.django-version }}
           pip install -r requirements.txt
+          pip install pytest-django pytest pytest-cov
         env:
           PIP_NO_CACHE_DIR: "false"
           PIP_DISABLE_PIP_VERSION_CHECK: "1"
@@ -47,8 +48,7 @@ jobs:
 
       - name: Run tests with pytest
         run: |
-          pip install pytest pytest-cov
-          pytest --ds=myproject.settings --cov=. --log-cli-level=DEBUG
+          pytest --cov=. --log-cli-level=DEBUG
         continue-on-error: false  # Ensures the job fails on test failure
 
       - name: Report coverage
