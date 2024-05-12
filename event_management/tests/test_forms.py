@@ -27,3 +27,18 @@ class EntryFormTimezoneTest(TestCase):
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
         self.assertEqual(response.status_code, 302)  # Assuming a redirect on success
+
+class EntryFormFailureTest(TestCase):
+    def setUp(self):
+        self.race = RaceFactory()
+
+    def test_form_submission_missing_fields(self):
+        form_data = {
+            # Intentionally omit required fields
+            'first_name': 'John',
+            'last_name': 'Doe',
+        }
+
+        response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
+        self.assertEqual(response.status_code, 200)  # Expecting no redirect on failure
+        self.assertContains(response, "This field is required.")
