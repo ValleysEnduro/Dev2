@@ -1,7 +1,7 @@
 import factory
 from factory.django import DjangoModelFactory
 from faker import Faker
-from .models import Venue, Event, AgeCategory, RefundPolicy, Race, Entry
+from ..models import Venue, Event, AgeCategory, RefundPolicy, Race, Entry
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta

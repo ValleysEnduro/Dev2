@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from .models import Payment, Product
 from event_management.models import Race, Entry
 import faker
-from event_management.factories import RaceFactory
+from event_management.tests.factories import RaceFactory
 
 
 fake = faker.Faker()
@@ -55,7 +55,7 @@ class PaymentFactory(factory.django.DjangoModelFactory):
 # Adjustments to tests
 from django.test import TestCase
 from .factories import PaymentFactory, ProductFactory
-from event_management.factories import RaceFactory, EntryFactory
+from event_management.tests.factories import RaceFactory, EntryFactory
 
 class PaymentModelTest(TestCase):
 

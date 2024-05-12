@@ -1,7 +1,7 @@
 # your_app_name/tests/test_models.py
 from django.test import TestCase
 from event_management.models import Venue, Event, Race, Entry
-from event_management.factories import VenueFactory, EventFactory, RaceFactory, EntryFactory
+from event_management.tests.factories import VenueFactory, EventFactory, RaceFactory, EntryFactory
 from decimal import Decimal
 
 
