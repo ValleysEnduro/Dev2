@@ -10,11 +10,9 @@ from .forms import EntryForm
 def display_entry_form(request, race_id):
     race = get_object_or_404(Race, id=race_id)
 
-    # Check if the entry submission deadline has passed
     if timezone.now() > race.entry_close_datetime:
         return HttpResponseForbidden("Entry submissions are closed for this race.")
     
-    # Check if the transfer submission deadline has passed
     if timezone.now() > race.transfer_close_datetime:
         return HttpResponseForbidden("Transfer submissions are closed for this race.")
 
@@ -30,11 +28,9 @@ def display_entry_form(request, race_id):
 def submit_entry_form(request, race_id):
     race = get_object_or_404(Race, id=race_id)
 
-    # Check if the entry submission deadline has passed
     if timezone.now() > race.entry_close_datetime:
         return HttpResponseForbidden("Entry submissions are closed for this race.")
     
-    # Check if the transfer submission deadline has passed
     if timezone.now() > race.transfer_close_datetime:
         return HttpResponseForbidden("Transfer submissions are closed for this race.")
 
@@ -47,9 +43,8 @@ def submit_entry_form(request, race_id):
         else:
             entry.user = None
         entry.save()
-        return redirect('homepage')  # Ensure this is the correct URL name
+        return redirect('core:homepage')  # Updated redirect to 'core:homepage'
     else:
-        # Log form errors for debugging purposes
         print(f"Form errors: {form.errors}")
         context = {
             'form': form,

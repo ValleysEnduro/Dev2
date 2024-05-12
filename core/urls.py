@@ -2,6 +2,7 @@
 from django.urls import path
 from .views import privacy_policy_view
 from .views import refund_policy_view
+from . import views
 
 app_name = 'core'
 
