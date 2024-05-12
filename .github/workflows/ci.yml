@@ -38,18 +38,21 @@ jobs:
           PIP_DEFAULT_TIMEOUT: "100"
 
       - name: Set environment variable for Django settings
-        run: echo "DJANGO_SETTINGS_MODULE=wbe.settings" >> $GITHUB_ENV  # Replace `yourproject` with your actual project name
+        run: echo "DJANGO_SETTINGS_MODULE=wbe.settings" >> $GITHUB_ENV
+
+      - name: Add project to PYTHONPATH
+        run: echo "PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/wbe" >> $GITHUB_ENV
 
       - name: Lint code with flake8
         run: |
           pip install flake8
           flake8 .
-        continue-on-error: true  # Allows the workflow to continue even if linting fails
+        continue-on-error: true
 
       - name: Run tests with pytest
         run: |
           pytest --cov=. --log-cli-level=DEBUG
-        continue-on-error: false  # Ensures the job fails on test failure
+        continue-on-error: false
 
       - name: Report coverage
         uses: actions/upload-artifact@v3
