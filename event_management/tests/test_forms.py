@@ -1,3 +1,6 @@
+import django
+django.setup()
+
 from django.urls import reverse
 from django.test import TestCase
 from .factories import RaceFactory
@@ -10,7 +13,7 @@ class EntryFormTimezoneTest(TestCase):
 
     def test_form_submission_different_timezone(self):
         form_data = {
-            'race': self.race.id,  # Ensure race field is included
+            'race': self.race.id,
             'privacy_policy_accepted': True,
             'refund_policy_accepted': True,
             'terms_and_conditions_accepted': True,
@@ -25,11 +28,10 @@ class EntryFormTimezoneTest(TestCase):
         timezone.activate(user_timezone)
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
-        if response.status_code == 200:
-            print("Form errors:", response.context['form'].errors if 'form' in response.context else 'No form in context')
-        self.assertEqual(response.status_code, 302, f"Unexpected status code: {response.status_code}")
-        self.assertRedirects(response, reverse('core:homepage'))  # Ensure correct redirect
-
+        self.assertEqual(response.status_code, 302)
+        if response.context and 'form' in response.context:
+            self.assertEqual(response.context['form'].errors, {}, msg=f"Form errors: {response.context['form'].errors}")
+        self.assertRedirects(response, reverse('core:homepage'))
 
 class EntryFormFailureTest(TestCase):
     def setUp(self):
@@ -37,9 +39,8 @@ class EntryFormFailureTest(TestCase):
 
     def test_form_submission_missing_fields(self):
         form_data = {
-            'race': self.race.id,  # Ensure race field is included
+            'race': self.race.id,
             'privacy_policy_accepted': True,
-            # 'refund_policy_accepted': True,  # Intentionally left out for the test
             'terms_and_conditions_accepted': True,
             'first_name': 'John',
             'last_name': 'Doe',
@@ -49,10 +50,26 @@ class EntryFormFailureTest(TestCase):
         }
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
-        if response.status_code == 200:
-            print("Form errors:", response.context['form'].errors if 'form' in response.context else 'No form in context')
-        self.assertEqual(response.status_code, 200, f"Unexpected status code: {response.status_code}")
-        self.assertContains(response, "This field is required.")  # Check for specific error message
+
+        # Ensure redirection happens
+        self.assertEqual(response.status_code, 302)
+        
+        # Follow the redirection
+        follow_response = self.client.get(response.url)
+        
+        # Check the final status code
+        self.assertEqual(follow_response.status_code, 200)
+
+        # Check if context is available and contains form errors
+        if follow_response.context is not None:
+            print(follow_response.context)
+            if 'form' in follow_response.context:
+                form_errors = follow_response.context['form'].errors.get('refund_policy_accepted', [])
+                self.assertIn("This field is required.", form_errors)
+            else:
+                self.fail("Form is not present in the context.")
+        else:
+            self.fail("Context is None after redirection.")
 
 
 class EntryFormViewTest(TestCase):
@@ -64,7 +81,7 @@ class EntryFormViewTest(TestCase):
 
     def test_entry_form_post_request(self):
         form_data = {
-            'race': self.race_within_window.id,  # Ensure race field is included
+            'race': self.race_within_window.id,
             'privacy_policy_accepted': True,
             'refund_policy_accepted': True,
             'terms_and_conditions_accepted': True,
@@ -76,7 +93,7 @@ class EntryFormViewTest(TestCase):
         }
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race_within_window.pk]), form_data)
-        if response.status_code == 200:
-            print("Form errors:", response.context['form'].errors if 'form' in response.context else 'No form in context')
-        self.assertEqual(response.status_code, 302, f"Unexpected status code: {response.status_code}")
-        self.assertRedirects(response, reverse('core:homepage'))  # Ensure correct redirect
+        self.assertEqual(response.status_code, 302)
+        if response.context and 'form' in response.context:
+            self.assertEqual(response.context['form'].errors, {}, msg=f"Form errors: {response.context['form'].errors}")
+        self.assertRedirects(response, reverse('core:homepage'))
