@@ -36,6 +36,9 @@ jobs:
           PIP_DISABLE_PIP_VERSION_CHECK: "1"
           PIP_DEFAULT_TIMEOUT: "100"
 
+      - name: Set environment variable for Django settings
+        run: echo "DJANGO_SETTINGS_MODULE=myproject.settings" >> $GITHUB_ENV
+
       - name: Lint code with flake8
         run: |
           pip install flake8
@@ -45,7 +48,7 @@ jobs:
       - name: Run tests with pytest
         run: |
           pip install pytest pytest-cov
-          pytest --cov=. --log-cli-level=DEBUG
+          pytest --ds=myproject.settings --cov=. --log-cli-level=DEBUG
         continue-on-error: false  # Ensures the job fails on test failure
 
       - name: Report coverage
