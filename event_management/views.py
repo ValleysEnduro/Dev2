@@ -9,6 +9,7 @@ from .forms import EntryForm
 def process_payment(entry):
     try:
         print(f"Processing payment for entry ID: {entry.id}")
+        # Simulate a successful payment process
         return True
     except Exception as e:
         print(f"Payment error: {e}")
@@ -18,9 +19,15 @@ def process_payment(entry):
 def submit_entry_form(request, race_id):
     race = get_object_or_404(Race, id=race_id)
 
+    # Check if entry submissions are closed
     if timezone.now() > race.entry_close_datetime:
         return HttpResponseForbidden("Entry submissions are closed for this race.")
 
+    # Check if transfer submissions are closed
+    if timezone.now() > race.transfer_close_datetime:
+        return HttpResponseForbidden("Transfer submissions are closed for")
+
+    # Check if transfer submissions are closed
     if timezone.now() > race.transfer_close_datetime:
         return HttpResponseForbidden("Transfer submissions are closed for this race.")
 
