@@ -34,9 +34,9 @@ class EntryFormTimezoneTest(TestCase):
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
         self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('core:homepage'))
         if response.context and 'form' in response.context:
             self.assertEqual(response.context['form'].errors, {}, msg=f"Form errors: {response.context['form'].errors}")
-        self.assertRedirects(response, reverse('core:homepage'))
 
 class EntryFormFailureTest(TestCase):
     def setUp(self):
@@ -69,9 +69,9 @@ class EntryFormFailureTest(TestCase):
         url = reverse('event_management:submit_entry_form', args=[self.race.id])
         response = self.client.post(url, {})
 
-        self.assertEqual(response.status_code, 200, "Status code is not 200")
+        self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.context, msg="Response context is None")
-        
+
         if response.context:
             form = response.context.get('form')
             self.assertIsNotNone(form, "Form is not in context")
@@ -113,6 +113,6 @@ class EntryFormViewTest(TestCase):
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race_within_window.pk]), form_data)
         self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('core:homepage'))
         if response.context and 'form' in response.context:
             self.assertEqual(response.context['form'].errors, {}, msg=f"Form errors: {response.context['form'].errors}")
-        self.assertRedirects(response, reverse('core:homepage'))
