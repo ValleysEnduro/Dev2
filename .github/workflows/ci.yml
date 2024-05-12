@@ -28,9 +28,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install Django==${{ matrix.django-version }}
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --retries 3 --timeout 30
+        env:
+          PIP_NO_CACHE_DIR: "false"
+          PIP_DISABLE_PIP_VERSION_CHECK: "1"
+          PIP_DEFAULT_TIMEOUT: "100"
 
       - name: Lint code with flake8
         run: |
