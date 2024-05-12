@@ -21,7 +21,7 @@ def homepage_view(request):
         'posts': posts
     }
     
-    # Render the homepage template
+    # Render the homepage template with context
     return render(request, 'core/homepage.html', context)
 
 @require_http_methods(["GET"])
