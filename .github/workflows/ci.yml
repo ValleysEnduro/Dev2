@@ -40,11 +40,11 @@ jobs:
       - name: Set environment variables
         run: |
           echo "DJANGO_SETTINGS_MODULE=wbe.settings" >> $GITHUB_ENV
-          echo "SECRET_KEY=your_secret_key_here" >> $GITHUB_ENV  # Replace with actual secret key
-          echo "STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_here" >> $GITHUB_ENV  # Replace with actual Stripe key
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+          echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> $GITHUB_ENV
 
       - name: Add project to PYTHONPATH
-        run: echo "PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/wbe" >> $GITHUB_ENV
+        run: echo "PYTHONPATH=${{ github.workspace }}/wbe" >> $GITHUB_ENV
 
       - name: Lint code with flake8
         run: |
