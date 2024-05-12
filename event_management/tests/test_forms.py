@@ -1,7 +1,5 @@
-import django
-django.setup()
 import os
-
+import django
 from django.urls import reverse
 from django.test import TestCase
 from .factories import RaceFactory
@@ -13,7 +11,6 @@ from event_management.forms import EntryForm
 # Explicitly setting Django settings module
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wbe.settings'
 django.setup()
-
 
 class EntryFormTimezoneTest(TestCase):
     def setUp(self):
@@ -119,4 +116,3 @@ class EntryFormViewTest(TestCase):
         if response.context and 'form' in response.context:
             self.assertEqual(response.context['form'].errors, {}, msg=f"Form errors: {response.context['form'].errors}")
         self.assertRedirects(response, reverse('core:homepage'))
-
