@@ -14,26 +14,23 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
         django-version: ['5.0.3']
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated to support Node.js 20
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5  # Updated to support Node.js 20
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt --retries 3 --timeout 30
-        env:
-          PIP_NO_CACHE_DIR: "false"
-          PIP_DISABLE_PIP_VERSION_CHECK: "1"
-          PIP_DEFAULT_TIMEOUT: "100"
+          pip install Django==${{ matrix.django-version }}
+          pip install -r requirements.txt
 
       - name: Lint code with flake8
         run: |
