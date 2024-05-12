@@ -119,3 +119,4 @@ class EntryFormViewTest(TestCase):
         if response.context and 'form' in response.context:
             self.assertEqual(response.context['form'].errors, {}, msg=f"Form errors: {response.context['form'].errors}")
         self.assertRedirects(response, reverse('core:homepage'))
+
