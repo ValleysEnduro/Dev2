@@ -6,7 +6,6 @@ from .factories import RaceFactory
 from django.utils import timezone
 import pytz
 from event_management.models import Venue, Race, Event
-from event_management.forms import EntryForm
 
 # Explicitly setting Django settings module
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wbe.settings'
@@ -37,7 +36,6 @@ class EntryFormTimezoneTest(TestCase):
         self.assertRedirects(response, reverse('core:homepage'))
         if response.context and 'form' in response.context:
             self.assertEqual(response.context['form'].errors, {}, msg=f"Form errors: {response.context['form'].errors}")
-
 
 class EntryFormFailureTest(TestCase):
     def setUp(self):
@@ -83,16 +81,14 @@ class EntryFormFailureTest(TestCase):
                 'first_name': ['This field is required.'],
                 'last_name': ['This field is required.'],
                 'date_of_birth': ['This field is required.'],
-                'privacy_policy_accepted': ['This field is required.'],
-                'refund_policy_accepted': ['This field is required.'],
-                'terms_and_conditions_accepted': ['This field is required.'],
+                'privacy_policy_accepted': ['You must accept the privacy policy to proceed.'],
+                'refund_policy_accepted': ['You must accept the refund policy to proceed.'],
+                'terms_and_conditions_accepted': ['You must accept the terms and conditions to proceed.'],
             }
 
             for field, error in expected_errors.items():
                 self.assertIn(field, form.errors)
                 self.assertEqual(form.errors[field], error)
-
-
 
 class EntryFormViewTest(TestCase):
     def setUp(self):
@@ -119,4 +115,3 @@ class EntryFormViewTest(TestCase):
         self.assertRedirects(response, reverse('core:homepage'))
         if response.context and 'form' in response.context:
             self.assertEqual(response.context['form'].errors, {}, msg=f"Form errors: {response.context['form'].errors}")
-

@@ -1,6 +1,5 @@
 from django import forms
-from .models import Entry, TermsandConditions
-from django.apps import apps
+from .models import Entry
 
 class EntryForm(forms.ModelForm):
     class Meta:
@@ -23,23 +22,26 @@ class EntryForm(forms.ModelForm):
             'refund_policy_accepted': forms.CheckboxInput(),
             'terms_and_conditions_accepted': forms.CheckboxInput(),
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
-            'first_name': forms.TextInput(attrs={'placeholder': 'First Name'}),
-            'last_name': forms.TextInput(attrs={'placeholder': 'Last Name'}),
-            'email': forms.EmailInput(attrs={'placeholder': 'Email'}),
-            'club_team_name': forms.TextInput(attrs={'placeholder': 'Club/Team Name'}),
+            'first_name': forms.TextInput(),
+            'last_name': forms.TextInput(),
+            'email': forms.EmailInput(),
+            'club_team_name': forms.TextInput(),
         }
 
-# Custom User Creation Form
-class CustomUserCreationForm(forms.ModelForm):
-    class Meta:
-        model = apps.get_model('event_management', 'Entry')  # Dynamically reference Entry model
-        fields = '__all__'
+    def clean_privacy_policy_accepted(self):
+        privacy_policy_accepted = self.cleaned_data.get('privacy_policy_accepted')
+        if not privacy_policy_accepted:
+            raise forms.ValidationError("You must accept the privacy policy to proceed.")
+        return privacy_policy_accepted
 
-# Helper Functions
-def get_entry_model():
-    from .models import Entry
-    return Entry
+    def clean_refund_policy_accepted(self):
+        refund_policy_accepted = self.cleaned_data.get('refund_policy_accepted')
+        if not refund_policy_accepted:
+            raise forms.ValidationError("You must accept the refund policy to proceed.")
+        return refund_policy_accepted
 
-def get_terms_and_conditions_model():
-    from .models import TermsandConditions
-    return TermsandConditions
+    def clean_terms_and_conditions_accepted(self):
+        terms_and_conditions_accepted = self.cleaned_data.get('terms_and_conditions_accepted')
+        if not terms_and_conditions_accepted:
+            raise forms.ValidationError("You must accept the terms and conditions to proceed.")
+        return terms_and_conditions_accepted
