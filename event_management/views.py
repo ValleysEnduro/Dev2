@@ -45,10 +45,9 @@ def submit_entry_form(request, race_id):
         if request.user.is_authenticated:
             entry.user = request.user
         else:
-            # For unauthenticated users, ensure their email is captured properly
             entry.user = None
         entry.save()
-        return redirect('homepage')  # Ensure 'homepage' is a valid URL name
+        return redirect('homepage')  # Ensure this is the correct URL name
     else:
         # Log form errors for debugging purposes
         print(f"Form errors: {form.errors}")
