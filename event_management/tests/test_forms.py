@@ -24,9 +24,8 @@ class EntryFormTimezoneTest(TestCase):
         timezone.activate(user_timezone)
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
-        self.assertEqual(response.status_code, 302)  # Check for redirect
+        self.assertEqual(response.status_code, 302, msg=f"Form errors: {response.context['form'].errors}")  # Check for redirect
         self.assertRedirects(response, reverse('core:homepage'))  # Ensure correct redirect
-
 
 class EntryFormFailureTest(TestCase):
     def setUp(self):
@@ -45,9 +44,8 @@ class EntryFormFailureTest(TestCase):
         }
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
-        self.assertEqual(response.status_code, 200)  # Form should re-render with errors
+        self.assertEqual(response.status_code, 200, msg=f"Form errors: {response.context['form'].errors}")  # Form should re-render with errors
         self.assertContains(response, "This field is required.")  # Check for specific error message
-
 
 class EntryFormViewTest(TestCase):
     def setUp(self):
@@ -69,5 +67,5 @@ class EntryFormViewTest(TestCase):
         }
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race_within_window.pk]), form_data)
-        self.assertEqual(response.status_code, 302)  # Check for redirect
+        self.assertEqual(response.status_code, 302, msg=f"Form errors: {response.context['form'].errors}")  # Check for redirect
         self.assertRedirects(response, reverse('core:homepage'))  # Ensure correct redirect
