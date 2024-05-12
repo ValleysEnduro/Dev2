@@ -37,14 +37,14 @@ jobs:
           PIP_DISABLE_PIP_VERSION_CHECK: "1"
           PIP_DEFAULT_TIMEOUT: "100"
 
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+
       - name: Set environment variables
         run: |
           echo "DJANGO_SETTINGS_MODULE=Dev2.wbe.settings" >> $GITHUB_ENV
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
           echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> $GITHUB_ENV
-
-      - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
 
       - name: Run tests with pytest
         run: |
