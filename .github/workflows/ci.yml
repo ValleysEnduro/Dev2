@@ -37,8 +37,10 @@ jobs:
           PIP_DISABLE_PIP_VERSION_CHECK: "1"
           PIP_DEFAULT_TIMEOUT: "100"
 
-      - name: Set environment variable for Django settings
-        run: echo "DJANGO_SETTINGS_MODULE=wbe.settings" >> $GITHUB_ENV
+      - name: Set environment variables
+        run: |
+          echo "DJANGO_SETTINGS_MODULE=wbe.settings" >> $GITHUB_ENV
+          echo "SECRET_KEY=your_secret_key_here" >> $GITHUB_ENV  # Replace `your_secret_key_here` with an actual secret key value
 
       - name: Add project to PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/wbe" >> $GITHUB_ENV
