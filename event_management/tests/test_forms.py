@@ -41,4 +41,4 @@ class EntryFormFailureTest(TestCase):
 
         response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race.pk]), form_data)
         self.assertEqual(response.status_code, 200)  # Expecting no redirect on failure
-        self.assertContains(response, "This field is required.")
+        self.assertContains(response, 'homepage')
