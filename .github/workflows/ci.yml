@@ -49,9 +49,9 @@ jobs:
 
       - name: Run tests with pytest
         env:
-          PYTHONPATH: ${{ github.workspace }}
+          DJANGO_SETTINGS_MODULE: wbe.settings
         run: |
-          pytest --cov=. --log-cli-level=DEBUG
+          pytest --cov=. --ds=wbe.settings --log-cli-level=DEBUG --tb=short -s
 
       - name: Report coverage
         uses: actions/upload-artifact@v3
