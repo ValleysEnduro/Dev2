@@ -21,15 +21,16 @@ class EntryFormViewTest(TestCase):
         )
 
     def test_entry_form_get_request(self):
-        response = self.client.get(reverse('event_management:entry_form', args=[self.race_within_window.pk]))
+        response = self.client.get(reverse('event_management:submit_entry_form', args=[self.race_within_window.pk]))
         self.assertEqual(response.status_code, 200)
 
     def test_entry_closed_get_request(self):
-        response = self.client.get(reverse('event_management:entry_form', args=[self.race_outside_entry_window.pk]))
+        response = self.client.get(reverse('event_management:submit_entry_form', args=[self.race_outside_entry_window.pk]))
         self.assertEqual(response.status_code, 403)
 
     def test_entry_form_post_request(self):
         form_data = {
+            'race': self.race_within_window.pk,  # Include the race field
             'privacy_policy_accepted': True,
             'refund_policy_accepted': True,
             'terms_and_conditions_accepted': True,
@@ -37,11 +38,13 @@ class EntryFormViewTest(TestCase):
             'last_name': 'User',
             'date_of_birth': '2000-01-01',
             'email': 'test@example.com',
+            'age_category': 1,  # Ensure age category matches the created data
             'club_team_name': 'Test Club'
         }
-        response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race_within_window.pk]), form_data)
+        response = self.client.post(reverse('event_management:submit_entry_form', args=[self.race_within_window.pk]), data=form_data)
         self.assertEqual(response.status_code, 302)
+        self.assertTrue(Entry.objects.filter(first_name='Test', last_name='User').exists())
 
     def test_transfer_closed_get_request(self):
-        response = self.client.get(reverse('event_management:entry_form', args=[self.race_outside_transfer_window.pk]))
+        response = self.client.get(reverse('event_management:submit_entry_form', args=[self.race_outside_transfer_window.pk]))
         self.assertEqual(response.status_code, 403)
