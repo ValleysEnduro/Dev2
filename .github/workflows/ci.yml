@@ -39,13 +39,13 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "DJANGO_SETTINGS_MODULE=wbe.settings" >> $GITHUB_ENV
+          echo "DJANGO_SETTINGS_MODULE=Dev2.wbe.settings" >> $GITHUB_ENV
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
           echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> $GITHUB_ENV
 
       - name: Add project to PYTHONPATH
         run: |
-          echo "PYTHONPATH=${{ github.workspace }}/wbe" >> $GITHUB_ENV
+          echo "PYTHONPATH=${{ github.workspace }}/Dev2" >> $GITHUB_ENV
 
       - name: Lint code with flake8
         run: |
@@ -54,8 +54,6 @@ jobs:
         continue-on-error: true
 
       - name: Run tests with pytest
-        env:
-          PYTHONPATH: ${{ github.workspace }}/wbe
         run: |
           pytest --cov=. --log-cli-level=DEBUG
         continue-on-error: false
