@@ -38,6 +38,7 @@ class EntryFormTimezoneTest(TestCase):
         if response.context and 'form' in response.context:
             self.assertEqual(response.context['form'].errors, {}, msg=f"Form errors: {response.context['form'].errors}")
 
+
 class EntryFormFailureTest(TestCase):
     def setUp(self):
         self.venue = Venue.objects.create(
@@ -77,7 +78,7 @@ class EntryFormFailureTest(TestCase):
             self.assertIsNotNone(form, "Form is not in context")
             self.assertFalse(form.is_valid(), "Form should be invalid")
             self.assertTrue(form.errors, "Form should have errors")
-
+            
             expected_errors = {
                 'first_name': ['This field is required.'],
                 'last_name': ['This field is required.'],
@@ -90,6 +91,7 @@ class EntryFormFailureTest(TestCase):
             for field, error in expected_errors.items():
                 self.assertIn(field, form.errors)
                 self.assertEqual(form.errors[field], error)
+
 
 
 class EntryFormViewTest(TestCase):
@@ -117,3 +119,4 @@ class EntryFormViewTest(TestCase):
         self.assertRedirects(response, reverse('core:homepage'))
         if response.context and 'form' in response.context:
             self.assertEqual(response.context['form'].errors, {}, msg=f"Form errors: {response.context['form'].errors}")
+
