@@ -43,27 +43,20 @@ jobs:
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
           echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> $GITHUB_ENV
 
-      - name: Add project to PYTHONPATH
-        run: |
-          echo "PYTHONPATH=${{ github.workspace }}/Dev2" >> $GITHUB_ENV
-
-      - name: Lint code with flake8
-        run: |
-          pip install flake8
-          flake8 .
-        continue-on-error: true
-
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=${{ github.workspace }}/Dev2" >> $GITHUB_ENV
+        
       - name: Run tests with pytest
         run: |
           pytest --cov=. --log-cli-level=DEBUG
         continue-on-error: false
-
+        
       - name: Report coverage
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
           path: coverage.xml
-
+        
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
