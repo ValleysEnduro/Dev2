@@ -4,6 +4,7 @@ import environ
 from django.conf import settings
 from django.conf.urls.static import static
 from pathlib import Path
+import dj_database_url
 
 from pathlib import Path
 
@@ -51,7 +52,8 @@ INSTALLED_APPS = [
     'mptt',
     'celery',
     'payments',
-    'users', 
+    'users',
+
     
 ]
 
@@ -90,11 +92,8 @@ WSGI_APPLICATION = 'wbe.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3'
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
     }
-}
 
 
 # Password validation
