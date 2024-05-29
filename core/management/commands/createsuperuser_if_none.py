@@ -13,23 +13,17 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         User = get_user_model()
-        username = settings.SUPERUSER_USERNAME
-        email = settings.SUPERUSER_EMAIL
-        password = settings.SUPERUSER_PASSWORD
-        
-        logger.info(f'Trying to create superuser with username: {username}, email: {email}')
-        
         if not User.objects.filter(is_superuser=True).exists():
-            try:
-                User.objects.create_superuser(username=username, email=email, password=password)
-                self.stdout.write(self.style.SUCCESS('Superuser created.'))
-                logger.info(f'Superuser created with username: {username}')
-            except Exception as e:
-                logger.error(f'Error creating superuser: {e}')
-                self.stdout.write(self.style.ERROR(f'Error creating superuser: {e}'))
+            username = settings.SUPERUSER_USERNAME
+            email = settings.SUPERUSER_EMAIL
+            password = settings.SUPERUSER_PASSWORD
+            logger.info(f'Creating superuser with username: {username}')
+            User.objects.create_superuser(username=username, email=email, password=password)
+            logger.info(f'Successfully created superuser: {username}')
+            self.stdout.write(self.style.SUCCESS('Superuser created.'))
         else:
-            self.stdout.write(self.style.SUCCESS('Superuser already exists.'))
             logger.info('Superuser already exists.')
+            self.stdout.write(self.style.SUCCESS('Superuser already exists.'))
 
 class Command(BaseCommand):
     help = 'List all superusers'
