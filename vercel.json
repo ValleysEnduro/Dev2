@@ -20,9 +20,5 @@
       "dest": "wbe/wsgi.py"
     }
   ],
-  "env": {
-    "SUPERUSER_USERNAME": "your_superuser_username",
-    "SUPERUSER_EMAIL": "your_superuser_email",
-    "SUPERUSER_PASSWORD": "your_superuser_password"
-  }
+  "buildCommand": "pip install -r requirements.txt && python manage.py migrate && python manage.py createsuperuser_if_none"
 }
