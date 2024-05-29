@@ -91,9 +91,11 @@ WSGI_APPLICATION = 'wbe.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+DATABASE_URL = f"postgres://{os.getenv('wbe_USER')}:{os.getenv('wbe_PASSWORD')}@{os.getenv('wbe_HOST')}:{os.getenv('wbe_PORT', '5432')}/{os.getenv('wbe_DATABASE')}"
+
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
-    }
+    'default': dj_database_url.config(default=DATABASE_URL)
+}
 
 
 # Password validation
