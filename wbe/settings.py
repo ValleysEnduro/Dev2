@@ -1,10 +1,9 @@
 import os
 import environ
 from pathlib import Path
-import dj_database_url
-from django.conf import settings
-from django.conf.urls.static import static
 import logging
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Initialize environment variables
 env = environ.Env()
@@ -13,7 +12,6 @@ environ.Env.read_env()  # Read .env file if it exists
 # Setup logging for debugging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -94,9 +92,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'wbe.wsgi.application'
 
 # Database configuration
-DATABASE_URL = f"postgres://{env('wbe_USER')}:{env('wbe_PASSWORD')}@{env('wbe_HOST')}:{env('wbe_PORT', '5432')}/{env('wbe_DATABASE')}"
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('wbe_DATABASE'),
+        'USER': env('wbe_USER'),
+        'PASSWORD': env('wbe_PASSWORD'),
+        'HOST': env('wbe_HOST'),
+        'PORT': env('wbe_PORT', default='5432'),
+    }
 }
 
 # Password validation
@@ -129,9 +133,9 @@ STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 
 # Sentry configuration
-import sentry_sdk
 sentry_sdk.init(
-    dsn="https://d9eabe8b6d66adaa68208ffdea98d43d@o4507180425281536.ingest.de.sentry.io/4507180427051088",
+    dsn=env('SENTRY_DSN'),
+    integrations=[DjangoIntegration()],
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
 )
@@ -149,14 +153,14 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',
+        'level': 'DEBUG' if DEBUG else 'INFO',
     },
 }
 
 # Security middleware
-SECURE_SSL_REDIRECT = True if not DEBUG else False
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_HSTS_SECONDS = 3600
