@@ -1,29 +1,38 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.views.decorators.http import require_http_methods
 from .models import HomePage, PrivacyPolicy
 from blog.models import Post
 from event_management.models import RefundPolicy
-from django.http import HttpResponse
+import os
 
 @require_http_methods(["GET"])
 def homepage_view(request):
-    # Fetch the homepage content safely
-    homepage_content = HomePage.objects.first()
-    if not homepage_content:
-        raise Http404("No HomePage content is available")
+    try:
+        # Fetch the homepage content safely
+        homepage_content = HomePage.objects.first()
+        if not homepage_content:
+            raise Http404("No HomePage content is available")
 
-    # Fetch the latest 5 blog posts
-    posts = Post.objects.all().order_by('-created_on')[:5]
+        # Fetch the latest 5 blog posts
+        posts = Post.objects.all().order_by('-created_on')[:5]
 
-    # Prepare the context for rendering
-    context = {
-        'homepage_content': homepage_content,
-        'posts': posts
-    }
-    
-    # Render the homepage template with context
-    return render(request, 'core/homepage.html', context)
+        # Prepare the context for rendering
+        context = {
+            'homepage_content': homepage_content,
+            'posts': posts
+        }
+
+        # Debugging output
+        templates_path = os.path.join(os.path.dirname(__file__), 'templates/core')
+        templates_files = os.listdir(templates_path)
+        debug_message = f"Templates in {templates_path}: {templates_files}"
+        print(debug_message)  # This will print to the console/logs
+
+        # Render the homepage template with context
+        return render(request, 'core/homepage.html', context)
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}\nDebug: {debug_message}")
 
 @require_http_methods(["GET"])
 def privacy_policy_view(request):
@@ -42,15 +51,3 @@ def refund_policy_view(request):
     
     # Render the refund policy template
     return render(request, 'core/refund_policy.html', {'policy': policy})
-
-# core/views.py
-from django.shortcuts import render
-
-def homepage_view(request):
-    return render(request, 'core/homepage.html')
-
-def homepage_view(request):
-    try:
-        return render(request, 'core/homepage.html')
-    except Exception as e:
-        return HttpResponse(f"Error: {str(e)}")
