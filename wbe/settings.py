@@ -130,16 +130,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 
-# If using collectstatic to gather all static files
+# Directory to collect static files into
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Directory where you have placed your static files
+# Additional directories where Django will look for static files
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-
-# WhiteNoise configuration
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
