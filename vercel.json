@@ -1,21 +1,19 @@
 {
-    "builds": [
-      {
-        "src": "wbe/wsgi.py",
-        "use": "@vercel/python",
-        "config": {
-          "maxLambdaSize": "15mb",
-          "runtime": "python3.12"
-        }
+  "version": 2,
+  "builds": [
+    {
+      "src": "wbe/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.12"
       }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "wbe/wsgi.py"
-      }
-    ],
-  "post-deploy": "python manage.py migrate"
-
-  }
-  
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "wbe/wsgi.py"
+    }
+  ]
+}
