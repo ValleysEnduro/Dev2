@@ -55,4 +55,22 @@
                 <li><a href="{% url 'users:dashboard' %}">Dashboard</a></li>
                 <li><a href="{% url 'users:profile_view' %}">Profile</a></li>
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'users:logout_view' %}">Logout</a
+                    <li><a href="{% url 'users:logout_view' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'users:login_view' %}">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        <!-- Default content -->
+        <h2>Static Test Content</h2>
+        <p>If you see this, block content is working.</p>
+        {% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2024 Western Bike Events. All rights reserved.</p>
+    </footer>
+</body>
+</html>
