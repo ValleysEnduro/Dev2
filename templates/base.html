@@ -1,5 +1,4 @@
 <!-- templates/base.html -->
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +20,7 @@
         {% endblock structured_data %}
     </script>
     <title>{% block title %}Western Bike Events{% endblock %}</title>
-    <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
+    {% load static %}
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
     <style>
         /* Basic styling for navbar */
