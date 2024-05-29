@@ -25,13 +25,12 @@ def homepage_view(request):
 
         # Debugging output
         templates_path = os.path.join(os.path.dirname(__file__), 'templates/core')
-        templates_files = os.listdir(templates_path)
-        debug_message = f"Templates in {templates_path}: {templates_files}"
-        print(debug_message)  # This will print to the console/logs
+        debug_message = f"Templates in {templates_path}: {os.listdir(templates_path)}"
 
         # Render the homepage template with context
         return render(request, 'core/homepage.html', context)
     except Exception as e:
+        debug_message = debug_message if 'debug_message' in locals() else "No debug message available"
         return HttpResponse(f"Error: {str(e)}\nDebug: {debug_message}")
 
 @require_http_methods(["GET"])
