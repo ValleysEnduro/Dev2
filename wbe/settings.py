@@ -4,10 +4,16 @@ from pathlib import Path
 import dj_database_url
 from django.conf import settings
 from django.conf.urls.static import static
+import logging
 
 # Initialize environment variables
 env = environ.Env()
 environ.Env.read_env()  # Read .env file if it exists
+
+# Setup logging for debugging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +32,13 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
 ]
+
+# Log environment variables to debug
+logger.debug(f"wbe_USER: {env('wbe_USER', default='Not Set')}")
+logger.debug(f"wbe_PASSWORD: {env('wbe_PASSWORD', default='Not Set')}")
+logger.debug(f"wbe_HOST: {env('wbe_HOST', default='Not Set')}")
+logger.debug(f"wbe_PORT: {env('wbe_PORT', default='Not Set')}")
+logger.debug(f"wbe_DATABASE: {env('wbe_DATABASE', default='Not Set')}")
 
 # Application definition
 INSTALLED_APPS = [
@@ -126,7 +139,6 @@ sentry_sdk.init(
 # Login URL
 LOGIN_URL = '/users/login/'
 
-# Logging configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
