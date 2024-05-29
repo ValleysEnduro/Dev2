@@ -4,6 +4,7 @@ from django.views.decorators.http import require_http_methods
 from .models import HomePage, PrivacyPolicy
 from blog.models import Post
 from event_management.models import RefundPolicy
+from django.http import HttpResponse
 
 @require_http_methods(["GET"])
 def homepage_view(request):
@@ -47,3 +48,9 @@ from django.shortcuts import render
 
 def homepage_view(request):
     return render(request, 'core/homepage.html')
+
+def homepage_view(request):
+    try:
+        return render(request, 'core/homepage.html')
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}")
