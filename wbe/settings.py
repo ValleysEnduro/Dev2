@@ -136,9 +136,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='dummy_key')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='dummy_secret')
 
-# Sentry configuration
 SENTRY_DSN = env('SENTRY_DSN', default=None)
-if SENTRY_DSN:
+if SENTRY_DSN and SENTRY_DSN != 'None':
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration()],
