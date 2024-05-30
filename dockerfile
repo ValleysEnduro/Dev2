@@ -27,8 +27,9 @@ ENV SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Create superuser
-RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('${SUPERUSER_USERNAME}', '${SUPERUSER_EMAIL}', '${SUPERUSER_PASSWORD}')" | python manage.py shell
+# Run migrations and create superuser if it doesn't exist
+COPY create_superuser.py /app/
+RUN python manage.py migrate && python create_superuser.py
 
 # Expose the port the app runs on
 EXPOSE 8000
