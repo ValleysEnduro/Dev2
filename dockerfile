@@ -1,6 +1,10 @@
 # Use the official Python image from the Docker Hub
 FROM python:3.12-slim
 
+# Set environment variables
+ENV SECRET_KEY your_secret_key
+ENV DJANGO_DEBUG True  # Set to False in production
+
 # Set the working directory
 WORKDIR /app
 
