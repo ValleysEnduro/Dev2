@@ -11,7 +11,6 @@ services:
       DJANGO_DEBUG: "True"  # Set to "False" in production
       STRIPE_PUBLISHABLE_KEY: your_stripe_publishable_key
       STRIPE_SECRET_KEY: your_stripe_secret_key
-      SENTRY_DSN: your_sentry_dsn
       SUPERUSER_USERNAME: your_superuser_username
       SUPERUSER_EMAIL: your_superuser_email
       SUPERUSER_PASSWORD: your_superuser_password
