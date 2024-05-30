@@ -27,7 +27,11 @@ SECRET_KEY = env('SECRET_KEY', default='fallback_secret_key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1'] if DEBUG else ['your_production_domain.com']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    # Add your production domain here
+]
 
 # Application definition
 INSTALLED_APPS = [
