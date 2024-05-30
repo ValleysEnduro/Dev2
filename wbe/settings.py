@@ -30,14 +30,6 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
 ]
-
-# Log environment variables to debug
-logger.debug(f"wbe_USER: {env('wbe_USER', default='Not Set')}")
-logger.debug(f"wbe_PASSWORD: {env('wbe_PASSWORD', default='Not Set')}")
-logger.debug(f"wbe_HOST: {env('wbe_HOST', default='Not Set')}")
-logger.debug(f"wbe_PORT: {env('wbe_PORT', default='Not Set')}")
-logger.debug(f"wbe_DATABASE: {env('wbe_DATABASE', default='Not Set')}")
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -94,12 +86,8 @@ WSGI_APPLICATION = 'wbe.wsgi.application'
 # Database configuration
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('wbe_DATABASE'),
-        'USER': env('wbe_USER'),
-        'PASSWORD': env('wbe_PASSWORD'),
-        'HOST': env('wbe_HOST'),
-        'PORT': env('wbe_PORT', default='5432'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
