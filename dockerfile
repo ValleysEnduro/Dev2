@@ -1,10 +1,6 @@
 # Use the official Python image from the Docker Hub
 FROM python:3.12-slim
 
-# Set environment variables
-ENV SECRET_KEY your_secret_key
-ENV DJANGO_DEBUG True  # Set to False in production
-
 # Set the working directory
 WORKDIR /app
 
@@ -18,8 +14,21 @@ RUN pip install --upgrade pip && \
 # Copy the project files
 COPY . /app/
 
+# Set environment variables
+ENV SECRET_KEY=${SECRET_KEY}
+ENV DJANGO_DEBUG=${DJANGO_DEBUG}
+ENV STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+ENV STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+ENV SENTRY_DSN=${SENTRY_DSN}
+ENV SUPERUSER_USERNAME=${SUPERUSER_USERNAME}
+ENV SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
+ENV SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+
 # Collect static files
 RUN python manage.py collectstatic --noinput
+
+# Create superuser
+RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('${SUPERUSER_USERNAME}', '${SUPERUSER_EMAIL}', '${SUPERUSER_PASSWORD}')" | python manage.py shell
 
 # Expose the port the app runs on
 EXPOSE 8000
