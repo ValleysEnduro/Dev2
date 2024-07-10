@@ -54,3 +54,4 @@ webencodings==0.5.1
 wheel==0.43.0
 whitenoise==6.6.0
 gunicorn
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
